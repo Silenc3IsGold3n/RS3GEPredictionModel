@@ -5,14 +5,18 @@ class Item():
 	Name = ''
 	Description = ''
 	Members = False
-	Price = 0
-	Current = []
-	Today = []
-	Day30 = []
-	Day90 = []
-	Day180 = [] 
+	Current_trend = ''
+	Current_price = 0
+	Today_trend = ''
+	Today_price = ''
+	Day30_trend = ''
+	Day30_change = ''
+	Day90_trend = ''
+	Day90_change = ''
+	Day180_trend = ''
+	Day180_change = ''
 	
-	def __init__(self, icon, icon_large, type, name, description, members, price, current, today, day30, day90, day180):
+	def __init__(self, icon, icon_large, type, name, description, members, current_trend,current_price,today_trend,today_price,day30_trend,day30_change,day90_trend,day90_change,day180_trend,day180_change):
 		self.Icon = icon
 		self.Icon_large = icon_large
 		self.Type = type
@@ -23,18 +27,27 @@ class Item():
 		else:
 			members = False
 		self.Members = members
-		if price[-1:] == 'm':
-			price = float(price[0:-1]) * 1000000
-		else:
-			price = float(price[0:-1]) * 1000
-		self.Price = int(price)
-		self.Current = current
-		self.Today = today
-		self.Day30 = day30
-		self.Day90 = day90
-		self.Day180 = day180
 		
-	def Item(self, icon, icon_large, type, name, description, members, price, current, today, day30, day90, day180):
+		self.Current_trend = current_trend
+		if(current_price > 9):
+			current_price = str(current_price)
+			if current_price[-1:] == 'm':
+				current_price = float(current_price[0:-1]) * 1000000
+			elif current_price[-1:] == 'k'::
+				current_price = float(current_price[0:-1]) * 1000
+		self.Current_price = int(current_price)
+		
+		self.Today_trend = today_trend
+		self.Today_price = today_price
+		self.Day30_trend = day30_trend
+		self.Day30_change = day30_change
+		self.Day90_trend = day90_trend
+		self.Day90_change = day90_change
+		self.Day180_trend = day180_trend
+		self.Day180_change = day180_change
+	
+		
+	def Item(self, icon, icon_large, type, name, description, members, current_trend,current_price,today_trend,today_price,day30_trend,day30_change,day90_trend,day90_change,day180_trend,day180_change):
 		self.Icon = icon
 		self.Icon_large = icon_large
 		self.Type = type
@@ -45,15 +58,23 @@ class Item():
 		else:
 			members = False
 		self.Members = members
-		if price[-1:] == 'm':
-			price = float(price[0:-1]) * 1000000
-		else:
-			price = float(price[0:-1]) * 1000
-		self.Price = int(price)
-		self.Current = current
-		self.Today = today
-		self.Day30 = day30
-		self.Day90 = day90
-		self.Day180 = day180
+		
+		self.Current_trend = current_trend
+		if(current_price > 9):
+			current_price = str(current_price)
+			if current_price[-1:] == 'm':
+				current_price = float(current_price[0:-1]) * 1000000
+			elif current_price[-1:] == 'k'::
+				current_price = float(current_price[0:-1]) * 1000
+		self.Current_price = int(current_price)
+		
+		self.Today_trend = today_trend
+		self.Today_price = today_price
+		self.Day30_trend = day30_trend
+		self.Day30_change = day30_change
+		self.Day90_trend = day90_trend
+		self.Day90_change = day90_change
+		self.Day180_trend = day180_trend
+		self.Day180_change = day180_change
 	
 		
