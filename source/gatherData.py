@@ -9,6 +9,9 @@ def run(url):
 	
 	#url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=21787'
 	data = requests.get(url)
+	if(data.status_code == 404):
+		print('Item Doesnt Exist.')
+		return
 	r = requests.post(url,data)
 	if r:
 		data = data.json()
@@ -53,12 +56,3 @@ def run(url):
 			print('Record already exists.')
 		cur.close()
 		con.close()
-	#sql1 = "Select * from item_Record"
-	#cur.execute(sql1)
-	#row = cur.fetchall()
-	#for i in row:
-		#print(str(i) + '\n')
-	
-	
-	
-	

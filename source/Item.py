@@ -35,10 +35,13 @@ class Item():
 		
 		current_price = str(current_price)
 		current_price = current_price.replace(',','')
+		current_price = current_price.replace(' ','')
 		if current_price[-1:] == 'm':
 			current_price = float(current_price[0:-1]) * 1000000
 		elif current_price[-1:] == 'k':
 			current_price = float(current_price[0:-1]) * 1000
+		elif current_price[-1:] == 'b':
+			current_price = float(current_price[0:-1]) * 1000000000
 		self.Current_price = int(current_price)
 		
 		self.Today_trend = today_trend

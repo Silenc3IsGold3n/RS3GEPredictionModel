@@ -22,4 +22,3 @@ def run():
 	cur.close()
 	con.close()
 
-run()
