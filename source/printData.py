@@ -21,3 +21,5 @@ def run():
 			#print(str(x))
 	cur.close()
 	con.close()
+
+run()
