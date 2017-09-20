@@ -19,13 +19,13 @@ def populate_proxy_List():
 		proxy_List.append(line);
 	file.close()
 	print(proxy_List)
-def update_proxy_available():
-	
+def update_proxy_available(i):
+	#need to append the file
 def get_available_proxy():
 	print(proxy_Available)
 	for i in range (0,len(proxy_Available)):
 		if (proxy_Available[i] == True):
-			proxy_Available[i] == False
+			update_proxy_available(i)
 			return proxy_List[i]
 	return ''
 	
