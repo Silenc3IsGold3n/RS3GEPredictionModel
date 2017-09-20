@@ -1,18 +1,19 @@
 import json
 import requests
 import sqlite3
-
+import time
 from Item import *
 
 
 def run(url):
-	
 	#url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=21787'
 	data = requests.get(url)
+	time.sleep(.01)
 	if(data.status_code == 404):
 		print('Item Doesnt Exist.')
 		return
 	r = requests.post(url,data)
+	r.connection.close()
 	if r:
 		data = data.json()
 		#data = json.loads(data)

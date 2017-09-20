@@ -1,0 +1,3 @@
+There is a reuqest limit in place so I will need to come up with a solution to be able to
+get around this limit. It seems that the current limit is 5 seconds per response (sad emoji)
+Look into using proxys as that will bypass that limit.
