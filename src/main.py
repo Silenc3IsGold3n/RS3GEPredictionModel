@@ -3,6 +3,8 @@ import time
 import gatherData
 import printData
 import getItemIds
+import proxy
+
 
 def get_Ids(x,y):
 	for i in range(x, y):
@@ -14,6 +16,9 @@ def get_Data(x,y):
 			print(url)
 			gatherData.run(url)
 class Main():
+	print('Loading proxy list.')
+	proxy.populate_proxy_List()
+	print('Done!')
 	running = True
 	def get_Input():
 		print('Enter Command:',end='')
@@ -42,7 +47,7 @@ class Main():
 				mythread = threading.Thread(name = "Thread-{}".format(i + 1),target = get_Data,kwargs={'x': lower,'y': upper}) 
 				mythread.start()
 				time.sleep(.1)
-			
+		print('Unrecognized command use "help".')	
 	while running == True:
 		get_Input()
 		

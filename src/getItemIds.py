@@ -5,7 +5,7 @@ import proxy
 
 def run_proxy(url):
 	prox = proxy.get_available_proxy()
-	print(prox)
+	print(str(prox))
 	if(proxy == ''):
 		return run(url)
 	data = requests.get(url,proxies=prox)
@@ -17,6 +17,7 @@ def run_proxy(url):
 		print('Requesting: ' + url + ' ' + 'with proxy.')
 		return run_proxy(url)
 	r.connection.close()
+	
 	if r:
 		data = data.json()
 		data = data['item']
@@ -28,6 +29,7 @@ def run_proxy(url):
 def run(url):
 	print(url)
 	data = requests.get(url)
+	#print(data.headers)
 	#time.sleep(.01)
 	if(data.status_code == 404):
 		print('Item Doesnt Exist.')
