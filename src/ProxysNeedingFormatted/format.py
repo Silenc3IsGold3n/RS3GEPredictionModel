@@ -13,7 +13,7 @@ for i in data:
 	str = 'http://' + str
 	data2.append(str)
 	
-for i in data2:
+'''for i in data2:
 	str = i
 	j = len(str)-1
 	#print(j)
@@ -27,8 +27,8 @@ for i in data2:
 		j-=1
 	data_final.append(str)
 print(data_final)
-
+'''
 file2 = open ('formatted','w+')
-for i in data_final:
+for i in data2:
 	file2.writelines(i+'\n')
 file2.close()

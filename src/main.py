@@ -5,7 +5,6 @@ import printData
 import getItemIds
 import proxy
 
-
 def get_Ids(x,y):
 	for i in range(x, y):
 		url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=' + str(i)
@@ -38,8 +37,7 @@ class Main():
 				upper = 100 + (i*100)
 				mythread = threading.Thread(name = "Thread-{}".format(i + 1),target = get_Ids,kwargs={'x': lower,'y': upper}) 
 				mythread.start()
-				time.sleep(.1)
-			#get_Ids(0,100)
+				time.sleep(.8)
 		elif command == 'getData':
 			for i in range(0,4): 
 				lower = 0 + (i*1000)

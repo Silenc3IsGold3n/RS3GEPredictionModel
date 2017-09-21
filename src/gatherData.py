@@ -6,7 +6,7 @@ from Item import *
 
 
 def run(url):
-	#url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=21787'
+	#url = http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category=1&alpha=a&page=1
 	data = requests.get(url)
 	time.sleep(.01)
 	if(data.status_code == 404):

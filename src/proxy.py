@@ -4,6 +4,8 @@ import threading
 proxy_List = []
 proxy_Available = []
 
+def get_proxy_list():
+	return proxy_List
 
 def populate_proxy_List():
 	global proxy_List

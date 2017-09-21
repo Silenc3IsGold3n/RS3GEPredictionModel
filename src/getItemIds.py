@@ -6,13 +6,19 @@ import urllib3
 import gsocketpool
 import socket
 from urllib3 import ProxyManager, make_headers
-from urllib3.contrib.socks import SOCKSProxyManager
+#from urllib3.contrib.socks import SOCKSProxyManager
 import threading
 
+'''
 def test_proxy(url):
+	#url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=2'
 	#s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	
 	prox = proxy.get_available_proxy()
-	#print(prox)
+	if(prox == ''):
+		prox = proxy.get_available_proxy()
+	print(url)
+	print('Proxy: ' + prox)
 	#print(socket.getaddrinfo('www.services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=2',80, 0, 0, socket.IPPROTO_TCP))
 	#s.connect(('http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=2',80))
 	#request = b"GET / HTTP/1.1\nHost: http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=2\n\n"
@@ -21,22 +27,41 @@ def test_proxy(url):
 	#print(result)
 	#default_headers = make_headers(proxy_basic_auth='user:pass')
 
-	http = ProxyManager('http://35.189.104.232',timeout = 3)
-	try:
-		data = {'attribute': 'value'}
-		encoded_data = json.dumps(data).encode('utf-8')
-		req = http.request(
-		'POST',
-		'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=2',
-		body=encoded_data,
-		headers={'Content-Type': 'html/text'})
-	except:
-		print('max entries')
-		return
-	print(req.data)
-	data = json.loads(req.data.decode('utf-8'))
+	http = ProxyManager(prox)
+	http.headers['user_name'] = 'user'
+	http.headers['password'] = 'pass'
+	#try:
+	data = {'attribute': 'value'}
+	encoded_data = json.dumps(data).encode('utf-8')
+	req = http.request(
+	'POST',
+	url,
+	body=encoded_data,
+	headers={'Content-Type': 'html/json'})
 	
-	print(data['item'])
+	print('Status Code: ' + str(req.status))
+	if(req.status == 404):
+		print('Item Does not exist.')
+		return
+	if(req.status == 501):
+		print('Proxy at api call limit')
+		get_new_proxy()
+		return test_proxy(url)
+	if(req.status == 407):
+		print('Authentication required')
+		return test_proxy(url)
+	if(req.status != 200):
+		print('Unknown Status Code')
+		return test_proxy(url)
+	#except:
+	#	print('Request Timed Out')
+	#	return test_proxy(url)
+	data = json.loads(req.data.decode('utf-8'))
+	#data = data['item']
+	print(data)
+	#print(data['item'])
+	#id = str(data['id'])
+	#print('ID: ' + id)
 	#res = http.response('http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=2')
 	#for i in req.data:
 	#	print(i)
@@ -51,18 +76,27 @@ def test_proxy(url):
 	
 	#print(socket.getaddrinfo('http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=2', 80))
 	#print(prox)
+	'''
+	
+	
+	
+	
+	
+	
+	
 prox = ''
 lock = threading.Lock()
+
+
 
 def get_new_proxy():
 	global prox
 	prox = proxy.get_available_proxy()
-	
-	
+
 def run_proxy(url):
 	global lock
 	#print(lock.locked())
-	if(prox == 'null'):
+	if(prox == ''):
 		print('No proxys available.')
 		return run(url)	
 	print('Proxy: ' + prox)
@@ -73,14 +107,20 @@ def run_proxy(url):
 		req = http.request(
 		'POST',
 		url,
+		timeout = 3,
 		body=encoded_data,
 		headers={'Content-Type': 'html/text'})
 		print(req.status)
 		if(req.status == 404):
 			print('Item Does not exist.')
+			#return run(url)
 			return
 		if(req.status == 501):
 			print('Proxy at api call limit')
+			get_new_proxy()
+			return run_proxy(url)
+		if(req.status == 407):
+			print('Authentication required')
 			get_new_proxy()
 			return run_proxy(url)
 		if(req.status != 200):
@@ -91,7 +131,7 @@ def run_proxy(url):
 	except:
 		print('Request timed out.')
 		get_new_proxy()
-		return run_proxy(url)
+		return run(url)
 	
 	
 	data = json.loads(req.data)
@@ -103,7 +143,8 @@ def run_proxy(url):
 	file = open('ItemIds','a')
 	file.write(id  + '\n')
 	file.close()
-	#lock.release()	
+	#lock.release()
+	
 def run(url):
 	global prox
 	global lock
