@@ -9,7 +9,7 @@ import proxy
 def get_Ids(x,y):
 	for i in range(x, y):
 		url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=' + str(i)
-		getItemIds.test_proxy(url)
+		getItemIds.run(url)
 def get_Data(x,y):
 		for i in range(x, y):
 			url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=' + str(i)
@@ -33,13 +33,13 @@ class Main():
 		elif command == 'printData':
 			printData.run()
 		elif command == 'getIds':
-			#for i in range(0,1): 
-				#lower = 0 + (i*10)
-				#upper = 10 + (i*10)
-				#mythread = threading.Thread(name = "Thread-{}".format(i + 1),target = get_Data,kwargs={'x': lower,'y': upper}) 
-				#mythread.start()
-				#time.sleep(.1)
-			get_Ids(0,1)
+			for i in range(0,4): 
+				lower = 0 + (i*100)
+				upper = 100 + (i*100)
+				mythread = threading.Thread(name = "Thread-{}".format(i + 1),target = get_Ids,kwargs={'x': lower,'y': upper}) 
+				mythread.start()
+				time.sleep(.1)
+			#get_Ids(0,100)
 		elif command == 'getData':
 			for i in range(0,4): 
 				lower = 0 + (i*1000)
