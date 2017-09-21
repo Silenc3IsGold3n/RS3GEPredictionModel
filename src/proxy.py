@@ -19,8 +19,8 @@ def populate_proxy_List():
 
 	
 def get_available_proxy():
-	print(proxy_List)
-	print(proxy_Available)
+	#print(proxy_List)
+	#print(proxy_Available)
 	for i in range (0,len(proxy_Available)):
 		if (proxy_Available[i] == True):
 			proxy_Available[i] = False
