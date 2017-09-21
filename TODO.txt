@@ -1,7 +1,5 @@
-There is a reuqest limit in place so I will need to come up with a solution to be able to
-get around this limit. It seems that the current limit is 5 seconds per response (sad emoji)
-Look into using proxys as that will bypass that limit.
-
+Using proxies gets aroung this limit just need to debug the occasional json error 
+and work out the kinks with the threads
 
 text/html; charset=ISO-8859-1
 investigate those data files with this charset
