@@ -3,23 +3,21 @@ import time
 import gatherData
 import printData
 import getItemIds
-
-alphabet = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+import proxy
 
 def get_Ids(x,y):
 	for i in range(x, y):
-		for j in alphabet:
-			url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category='+ str(i) + '&alpha=' + str(j) + '&page=1'
-			getItemIds.run(url,1)
+		url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=' + str(i)
+		getItemIds.run(url)
 def get_Data(x,y):
-	lock = threading.Lock()
-	start_time = time.time()
-	for i in range(x, y):
-		for j in alphabet:
-			url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category='+ str(i) + '&alpha=' + str(j) + '&page=1'
-			gatherData.run(url,1,0,0,lock,False)
-	print('Toal time: ' + str((time.time() - start_time)) + ' seconds.')
+		for i in range(x, y):
+			url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item=' + str(i)
+			print(url)
+			gatherData.run(url)
 class Main():
+	print('Loading proxy list.')
+	proxy.populate_proxy_List()
+	print('Done!')
 	running = True
 	def get_Input():
 		print('Enter Command:',end='')
@@ -34,16 +32,16 @@ class Main():
 		elif command == 'printData':
 			printData.run()
 		elif command == 'getIds':
-			for i in range(0,2): 
-				lower = 0 + (i*18)
-				upper = (18+i) + (i*18)
+			for i in range(0,4): 
+				lower = 0 + (i*100)
+				upper = 100 + (i*100)
 				mythread = threading.Thread(name = "Thread-{}".format(i + 1),target = get_Ids,kwargs={'x': lower,'y': upper}) 
 				mythread.start()
-				time.sleep(.1)
+				time.sleep(.8)
 		elif command == 'getData':
-			for i in range(0,2): 
-				lower = 0 + (i*18)
-				upper = (18+i) + (i*18)
+			for i in range(0,4): 
+				lower = 0 + (i*1000)
+				upper = 1000 + (i*1000)
 				mythread = threading.Thread(name = "Thread-{}".format(i + 1),target = get_Data,kwargs={'x': lower,'y': upper}) 
 				mythread.start()
 				time.sleep(.1)

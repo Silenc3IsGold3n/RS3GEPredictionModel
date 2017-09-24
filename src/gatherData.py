@@ -5,55 +5,63 @@ import time
 from Item import *
 
 
-def run(url):
-	#url = http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category=1&alpha=a&page=1
-	data = requests.get(url)
-	time.sleep(.01)
-	if(data.status_code == 404):
-		print('Item Doesnt Exist.')
+def run(url,page,total_items,current_items,lockobject,initial):
+	if(current_items > total_items):
+		print('Somethings wrong, currrent items are greater than total items.')
+	if(total_items == current_items and initial == True):
 		return
-	r = requests.post(url,data)
-	r.connection.close()
-	if r:
-		data = data.json()
-		#data = json.loads(data)
-		print (str(json.dumps(data,indent = 4)))
-		data = data['item']
+	print(url)
+	data = requests.get(url)
+	if(data.status_code == 404):
+		print('Error 404, check if able to connect to server.')
+		return
+	if(data.status_code == 200):
+		if(len(data.text) == 0):
+			print('Request Limit, Waiting five seconds.')
+			time.sleep(5)
+			return run(url,page,total_items,current_items,lockobject,False)
+	data = data.json()
+	if (total_items == 0):
+		total_items = data['total']
+		initial = True
+	data = data['items']
+	print('Found ' + str(len(data)) + ' items.')
+	current_items + len(data)
+	#print (str(json.dumps(data,indent = 4)))
+	
+	con = sqlite3.connect("GE_Data.db")
+	cur = con.cursor()
+	date = time.strftime("%d_%m_%Y")
+	cur.execute("create table if not exists item_Record_"+date+" (Id int, Type text ,Name text,Current_trend text,Current_price int, Today_trend text, Today_price text, Members bool)")
+	
+	for i in data:	
+		#icon = data['icon']
+		#icon_large = data['icon_large']
+		id = int(i['id'])
+		type  = i['type']
+		name = i['name']
+		members = i['members']
+		current_trend = i['current']['trend']
+		current_price = i['current']['price']
+		today_trend = i['today']['trend']
+		today_price = i['today']['price']		
+		item_Record = Item(id,type, name, current_trend,current_price,today_trend,today_price,members)
 		
-		icon = data['icon']
-		icon_large = data['icon_large']
-		id = int(data['id'])
-		type  = data['type']
-		name = data['name']
-		description = data['description']
-		members = data['members']
-
-		current_trend = data['current']['trend']
-		current_price = data['current']['price']
-		today_trend = data['today']['trend']
-		today_price = data['today']['price']
-		day30_trend = data['day30']['trend']
-		day30_change = data['day30']['change']
-		day90_trend = data['day90']['trend']
-		day90_change = data['day90']['change']
-		day180_trend = data['day180']['trend']
-		day180_change = data['day180']['change']
-		
-		item_Record = Item(icon, icon_large,id,type, name, description, members, current_trend,current_price,today_trend,today_price,day30_trend,day30_change,day90_trend,day90_change,day180_trend,day180_change)
-						
-		con = sqlite3.connect("GE_Data.db")
-		cur = con.cursor()
-		cur.execute('''create table if not exists item_Record(Icon text, Icon_Large text,Id int, Type text ,Name text,
-					Description text, Members bool, Current_trend text, Current_price int, Today_trend text, Today_price text,
-					Day30_trend text, Day30_change text, Day90_trend text, Day90_change text, Day180_trend text, Day180_change text)''')
-				
-		sqlq = "SELECT COUNT(1) FROM item_Record WHERE Id = ?"
+		#Check if item is already in database then 
+		sqlq = "SELECT COUNT(1) FROM item_Record_" +date+ " WHERE Id = ?"
 		cur.execute(sqlq,(id,))
 		if not cur.fetchone()[0]:
-			sql = "INSERT INTO item_Record VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-			cur.execute(sql,(item_Record.Icon,item_Record.Icon_large,item_Record.Id,item_Record.Type,item_Record.Name,item_Record.Description,item_Record.Members,item_Record.Current_trend,item_Record.Current_price,item_Record.Today_trend,item_Record.Today_price,item_Record.Day30_trend,item_Record.Day30_change,item_Record.Day90_trend,item_Record.Day90_change,item_Record.Day180_trend,item_Record.Day180_change))
+			print('Inserting item id = ' + str(id) +' into database.')
+			sql = "INSERT INTO item_Record_"+date+ " VALUES (?,?,?,?,?,?,?,?)"
+			lockobject.acquire()
+			cur.execute(sql,(item_Record.Id,item_Record.Type,item_Record.Name,item_Record.Current_trend,item_Record.Current_price,item_Record.Today_trend,item_Record.Today_price,item_Record.Members))
 			con.commit()
 		else:
 			print('Record already exists.')
-		cur.close()
-		con.close()
+		lockobject.release()
+	cur.close()
+	con.close()
+	if(len(data) == 12):
+		newurl = url[:-1] + str(page+1)
+		return run (newurl,page+1,total_items,current_items,lockobject,initial)
+		

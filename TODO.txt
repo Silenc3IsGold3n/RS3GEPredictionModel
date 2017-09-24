@@ -1,5 +1,4 @@
-Using proxies gets aroung this limit just need to debug the occasional json error 
-and work out the kinks with the threads
+
 
 text/html; charset=ISO-8859-1
 investigate those data files with this charset
