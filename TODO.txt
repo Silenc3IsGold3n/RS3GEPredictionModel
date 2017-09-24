@@ -1,4 +1,9 @@
+Need to optimize the rs3 algorithm to not take useless api calls as in once we get all 
+the items for a category we can just move on to the next instead of goign through each letter
 
 
+
+
+
+Ignore
 text/html; charset=ISO-8859-1
-investigate those data files with this charset
