@@ -44,11 +44,12 @@ class Main():
 			#for i in range(0,1): 
 				#lower = 0 + (i*18)
 				#upper = (18+i) + (i*18)
-			lower = 13
-			upper = 18
-			mythread = threading.Thread(name = "Thread-{}".format(1),target = get_Data,kwargs={'x': lower,'y': upper}) 
-			mythread.start()
-			time.sleep(.1)
+			#lower = 13
+			#upper = 18
+			#mythread = threading.Thread(name = "Thread-{}".format(1),target = get_Data,kwargs={'x': lower,'y': upper}) 
+			#mythread.start()
+			#time.sleep(.1)
+			get_Data(0,37)
 			
 		else:
 			print('Unrecognized command use "help".')	

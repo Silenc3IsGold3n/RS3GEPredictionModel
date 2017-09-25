@@ -20,7 +20,10 @@ def run(url,page,total_items,current_items,lockobject,initial):
 			print('Request Limit, Waiting five seconds.')
 			time.sleep(5)
 			return run(url,page,total_items,current_items,lockobject,False)
-	data = data.json()
+	try:
+		data = data.json()
+	except:
+		return run(url,page,total_items,current_items,lockobject,False)
 	if (total_items == 0):
 		total_items = data['total']
 		initial = True
