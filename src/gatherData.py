@@ -53,12 +53,12 @@ def run(url,page,total_items,current_items,lockobject,initial):
 		if not cur.fetchone()[0]:
 			print('Inserting item id = ' + str(id) +' into database.')
 			sql = "INSERT INTO item_Record_"+date+ " VALUES (?,?,?,?,?,?,?,?)"
-			lockobject.acquire()
+			#lockobject.acquire()
 			cur.execute(sql,(item_Record.Id,item_Record.Type,item_Record.Name,item_Record.Current_trend,item_Record.Current_price,item_Record.Today_trend,item_Record.Today_price,item_Record.Members))
 			con.commit()
 		else:
 			print('Record already exists.')
-		lockobject.release()
+		#lockobject.release()
 	cur.close()
 	con.close()
 	if(len(data) == 12):
