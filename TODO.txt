@@ -1,7 +1,5 @@
-Need to optimize the rs3 algorithm to not take useless api calls as in once we get all 
-the items for a category we can just move on to the next instead of goign through each letter
-
-
+Edit the page filter to not include urls that the previouse page had 12 items
+this way do not need to get a new list for every update that adds new items.
 
 
 

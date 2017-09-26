@@ -4,12 +4,35 @@ import sqlite3
 import time
 from Item import *
 
+current_items_in_cat = 0
+def reset_current_items():
+	global current_items_in_cat
+	current_items_in_cat = 0
+def get_current_items():
+	global current_items_in_cat
+	print('current items: ' + str(current_items_in_cat))
+	return current_items_in_cat
 
-def run(url,page,total_items,current_items,lockobject,initial):
-	if(current_items > total_items):
-		print('Somethings wrong, currrent items are greater than total items.')
-	if(total_items == current_items and initial == True):
-		return
+def get_items_in_category(url):
+	items = requests.get(url)
+	if(items.status_code == 404):
+		print('Error 404, check if able to connect to server.')
+		return 0
+	if(items.status_code == 200):
+		if(len(items.text) == 0):
+			print('Request Limit, Waiting five seconds.')
+			time.sleep(5)
+			return get_items_in_category(url)
+	try:
+		items = items.json()
+	except:
+		return run(url)
+	x = int(items['total'])
+	return x
+	
+	
+def run(url,page,lockobject):
+	global current_items_in_cat
 	print(url)
 	data = requests.get(url)
 	if(data.status_code == 404):
@@ -19,17 +42,21 @@ def run(url,page,total_items,current_items,lockobject,initial):
 		if(len(data.text) == 0):
 			print('Request Limit, Waiting five seconds.')
 			time.sleep(5)
-			return run(url,page,total_items,current_items,lockobject,False)
+			return run(url,page,lockobject)
 	try:
 		data = data.json()
 	except:
-		return run(url,page,total_items,current_items,lockobject,False)
-	if (total_items == 0):
-		total_items = data['total']
-		initial = True
+		return run(url,page,lockobject)
 	data = data['items']
 	print('Found ' + str(len(data)) + ' items.')
-	current_items + len(data)
+	if(int(len(data)) == 0):
+		file = open ('pageswithnoitems','a+')
+		file.write(url)
+		file.write('\n')
+		print('Added ' + url + ' to page filter file.')
+		file.close()
+		return
+	current_items_in_cat = current_items_in_cat + int(len(data))
 	#print (str(json.dumps(data,indent = 4)))
 	
 	con = sqlite3.connect("GE_Data.db")
@@ -66,5 +93,5 @@ def run(url,page,total_items,current_items,lockobject,initial):
 	con.close()
 	if(len(data) == 12):
 		newurl = url[:-1] + str(page+1)
-		return run (newurl,page+1,total_items,current_items,lockobject,initial)
+		return run (newurl,page+1,lockobject)
 		
