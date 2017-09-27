@@ -13,6 +13,7 @@ def get_Ids(x,y):
 			getItemIds.run(url,1)
 			
 def get_Data(x,y):
+	global urls
 	lock = threading.Lock()
 	start_time = time.time()
 	total_items_added = 0
@@ -34,6 +35,7 @@ def get_Data(x,y):
 				print('Items added so far in category: ' + str(current_items) +'/'+str(items_in_category))
 				gatherData.reset_current_items()
 			else:
+				print('Url has no items, skipping.')
 				print('Items added so far in category: ' + str(current_items) +'/'+str(items_in_category))
 			if (current_items == items_in_category):
 				break
@@ -42,6 +44,7 @@ def get_Data(x,y):
 	print('Toal time: ' + str((time.time() - start_time)) + ' seconds.')
 	
 class Main():
+	global urls
 	running = True
 	#get list of urls that have no items
 	file = open('pageswithnoitems','r')

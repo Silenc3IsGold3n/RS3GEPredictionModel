@@ -3,6 +3,6 @@ this way do not need to get a new list for every update that adds new items.
 
 Add unit tests as the logic is starting to get complex
 
-
+Page filter not working? Fix it!! (reduces time by half an hour)
 
 text/html; charset=ISO-8859-1
