@@ -17,6 +17,7 @@ def get_Data(x,y):
 	lock = threading.Lock()
 	start_time = time.time()
 	total_items_added = 0
+	gatherData.load_urls()
 	for i in range(x, y):
 		url = 'http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category='+ str(i) + '&alpha=a'
 		items_in_category = gatherData.get_items_in_category(url)

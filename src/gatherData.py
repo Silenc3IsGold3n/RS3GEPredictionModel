@@ -3,8 +3,15 @@ import requests
 import sqlite3
 import time
 from Item import *
-
+urls = []
 current_items_in_cat = 0
+
+def load_urls():
+	global urls
+	file = open('pageswithnoitems','r')
+	urls = file.read().splitlines()		
+	file.close()
+
 def reset_current_items():
 	global current_items_in_cat
 	current_items_in_cat = 0
@@ -26,14 +33,19 @@ def get_items_in_category(url):
 	try:
 		items = items.json()
 	except:
-		return run(url)
+		return get_items_in_category(url)
 	x = int(items['total'])
-	return x
-	
+	return x	
 	
 def run(url,page,lockobject):
+	global urls
 	global current_items_in_cat
 	print(url)
+	for u in urls:
+		if(u == url):
+			print('Url has no items, skipping.')
+			return
+	
 	data = requests.get(url)
 	if(data.status_code == 404):
 		print('Error 404, check if able to connect to server.')
