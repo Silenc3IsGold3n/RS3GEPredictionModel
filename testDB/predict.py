@@ -1,34 +1,47 @@
 import time
 import sqlite3
 import pandas as pd
-import sklearn
-dataframes = []
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import make_classification
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import (RandomTreesEmbedding, RandomForestClassifier, GradientBoostingClassifier)
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_curve
+from sklearn.pipeline import make_pipeline
+
+traindataframes = []
 testDataFrame = []
 
 
+def predict():
+	return
 
 
 
-#will only be predicting the cannonball to start
 def start_predict():
-        global dataframes
-        global testDataFrame
-        initial_df = pd.DataFrame(dataframes[0])
-        initial_df = initial_df.iloc[0]
-        print(initial_df)
-        initial_price = initial_df.iloc[4]
-        initial_trend = initial_df.iloc[3]
-        initial_today_price = initial_df.iloc[6]
-        initial_today_trend = initial_df.iloc[5]
-        print(initial_price)        
-        print(initial_trend)
-        print(initial_today_price)        
-        print(initial_today_trend)
+	global traindataframes
+	global testDataFrame
+	initial_df = pd.DataFrame(traindataframes[0])
+	
+	id_col = initial_df['Id']
+	price_col = initial_df['Current_price']
+	trend_col = initial_df['Current_trend']
+	today_price_col = initial_df['Today_price']
+	today_trend_col = initial_df['Today_trend']
+	print(id_col)
+	print(price_col) 
+	print(price_trend_col)
+	print(today_price_col) 
+	print(today_price_col)	
 
 
 
 def get_Data():
-        global dataframes
+        global traindataframes
         global testDataFrame
         tables = []
         con = sqlite3.connect("GE_Data.db")
@@ -39,11 +52,11 @@ def get_Data():
         for i in table.fetchall():
                 tables.append(i[0])
         for i in tables[:-1]:
-                print('DFs: ' + str(i))
+               # print('DFs: ' + str(i))
                 q = "select * from " + i + " ORDER BY Id"
-                dataframes.append(pd.read_sql(q,con))
+                traindataframes.append(pd.read_sql(q,con))
         for i in tables[-1:]:
-                print('TestDF: ' + str(i))
+               # print('TestDF: ' + str(i))
                 q = "select * from " + i + " ORDER BY Id"
                 testDataFrame.append(pd.read_sql(q,con))
         cur.close()
@@ -60,3 +73,4 @@ def get_Data():
 	
 get_Data()
 start_predict()
+#predict()
