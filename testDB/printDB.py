@@ -10,10 +10,10 @@ def run():
 	print('Todays date: ' + str(time.strftime("%d_%m_%Y")))
 	print('Enter requested date in d_mm_yyyy format:',end='')
 	date = input()
-	q = "select * from item_Record_" + date+ " ORDER BY Id"
+	q = "select * from item_Record_" + date
 	data_df = pd.read_sql(q,con)
-	with pd.option_context('display.max_columns', 17,'display.max_rows',10000,'display.width', 10000):
+	with pd.option_context('display.max_columns', 100,'display.max_rows',10000,'display.width', 10000):
 		print(data_df)
 	cur.close()
 	con.close()
-
+run()
