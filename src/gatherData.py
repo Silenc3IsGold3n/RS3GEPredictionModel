@@ -74,8 +74,8 @@ def run(url,page,lockobject):
 	con = sqlite3.connect("GE_Data.db")
 	cur = con.cursor()
 	date = time.strftime("%d_%m_%Y")
-	cur.execute("create table if not exists item_Record_"+date+" (Id int, Type text ,Name text,Current_trend text,Current_price int, Today_trend text, Today_price text, Members bool)")
-	
+	#cur.execute("create table if not exists item_Record_"+date+" (Id int, Type text ,Name text,Current_trend text,Current_price int, Today_trend text, Today_price text, Members bool)")
+	cur.execute("create table if not exists item_Record_28_09_2017 (Id int, Type text ,Name text,Current_trend text,Current_price int, Today_trend text, Today_price text, Members bool)")
 	for i in data:	
 		#icon = data['icon']
 		#icon_large = data['icon_large']
