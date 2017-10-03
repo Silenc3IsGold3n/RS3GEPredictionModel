@@ -41,10 +41,16 @@ def gradient_descent():
 	trend_col = initial_df['Current_trend']
 	today_price_col = initial_df['Today_price']
 	today_trend_col = initial_df['Today_trend']
-	#price_col = pd.concat()
-	today_price_col = today_price_col.columns
 	
+	a = [0]
+	df =  pd.DataFrame(a)
 	
+	print(df)
+	print(price_col.axes)
+	price_col = price_col.append(df,ignore_index = False)
+	#today_price_col = today_price_col.columns
+	print(price_col)
+	'''
 	#convert data into usable form and put into dataframe
 	pd.to_numeric(price_col,downcast = 'float')
 	data_df = [price_col,today_price_col]
@@ -100,7 +106,7 @@ def gradient_descent():
 	print('R: ', r)
 	print()
 
-
+'''
 def get_Data():
         global traindataframes
         global testDataFrame
