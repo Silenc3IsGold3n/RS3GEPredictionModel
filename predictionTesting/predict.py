@@ -35,7 +35,7 @@ def gradient_descent():
 	global testDataFrame
 	
 	#get initial data
-	initial_df = pd.DataFrame(traindataframes[0])
+	initial_df = traindataframes[0]
 	id_col = initial_df['Id']
 	price_col = initial_df['Current_price']
 	trend_col = initial_df['Current_trend']
@@ -44,15 +44,11 @@ def gradient_descent():
 	
 	a = [0]
 	df =  pd.DataFrame(a)
-	
-	print(df)
-	print(price_col.axes)
-	price_col = price_col.append(df,ignore_index = False)
-	#today_price_col = today_price_col.columns
+	price_col = price_col.append(df,ignore_index = True)
 	print(price_col)
-	'''
+	
 	#convert data into usable form and put into dataframe
-	pd.to_numeric(price_col,downcast = 'float')
+	#pd.to_numeric(price_col,downcast = 'float')
 	data_df = [price_col,today_price_col]
 	data_df = pd.DataFrame(data_df,dtype = 'float')
 	data_df = pd.DataFrame.transpose(data_df)
@@ -74,7 +70,7 @@ def gradient_descent():
 
 	features_array = np.array(features)
 	values_array = np.array(values)
-
+'''
 	alpha = 0.1
 	num_iterations = 20
 	theta_descent = np.zeros(len(features.columns))
