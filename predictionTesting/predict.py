@@ -42,39 +42,68 @@ def gradient_descent():
 	today_price_col = initial_df['Today_price']
 	today_trend_col = initial_df['Today_trend']
 	
-	a = [0]
-	df =  pd.DataFrame(a)
+	#remove +signs
+	for i in today_price_col:
+		if '+' in i:
+			temp = i.replace('+','')
+			today_price_col = today_price_col.replace(str(i),temp)
+	#convert to floats
+	for i in today_price_col:
+		today_price_col = today_price_col.replace(str(i),float(i))
+	
+	
+	#make the size(rows)equal to the other data sets
+	a = [0.0]
+	df = pd.DataFrame(a)
 	price_col = price_col.append(df,ignore_index = True)
-	print(price_col)
+	today_price_col = today_price_col.append(df,ignore_index = True)
+	
+	#print(today_price_col)
+	#print('==================================================================')
+	
+	#print(price_col)
+	#print(today_price_col)
+	#print('==================================================================')
 	
 	#convert data into usable form and put into dataframe
-	#pd.to_numeric(price_col,downcast = 'float')
-	data_df = [price_col,today_price_col]
-	data_df = pd.DataFrame(data_df,dtype = 'float')
-	data_df = pd.DataFrame.transpose(data_df)
+	frames = [price_col,today_price_col]
+	data_df = pd.concat(frames,axis=1)
 	
 	#get features
 	features = data_df
 	features = (features - features.mean())/features.std()
 	
 	#values
-	value_price = [traindataframes[1]['Current_price']]
-	value_today = [traindataframes[1]['Today_price']]
+	value_df = traindataframes[1]
+	value_price = value_df['Current_price']
+	value_today = value_df['Today_price']
+	
+	#remove +signs
+	for i in value_today:
+		if '+' in i:
+			temp = i.replace('+','')
+			value_today = value_today.replace(str(i),temp)
+	#convert to floats
+	for i in value_today:
+		value_today = value_today.replace(str(i),float(i))
+			
 	values = [value_price,value_today]
-	values = pd.DataFrame(values,dtype = 'float')
-	print(values)
+	values = pd.DataFrame(values).transpose()
 	values =(values - values.mean())/values.std()
-	m = len(features)
+
+	m = len(values)
 	#features['ones'] = np.ones(m)
 	
 
 	features_array = np.array(features)
 	values_array = np.array(values)
-'''
+	
 	alpha = 0.1
 	num_iterations = 20
+	
 	theta_descent = np.zeros(len(features.columns))
-
+	print(features_array.shape)
+	print(theta_descent.shape)
 	cost_history = []
 
 	for i in range(num_iterations):
@@ -102,7 +131,7 @@ def gradient_descent():
 	print('R: ', r)
 	print()
 
-'''
+
 def get_Data():
         global traindataframes
         global testDataFrame
