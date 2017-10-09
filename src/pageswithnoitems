@@ -326,3 +326,6 @@ http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category=36&a
 http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category=36&alpha=u&page=1
 http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category=36&alpha=v&page=1
 http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category=36&alpha=x&page=1
+http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category=0&alpha=b&page=5
+http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category=0&alpha=p&page=4
+http://services.runescape.com/m=itemdb_rs/api/catalogue/items.json?category=0&alpha=w&page=2

@@ -67,6 +67,7 @@ def gradient_descent():
 	
 	#convert data into usable form and put into dataframe
 	frames = [price_col,today_price_col]
+	#frames = [price_col]
 	data_df = pd.concat(frames,axis=1)
 	
 	#get features
@@ -87,8 +88,9 @@ def gradient_descent():
 	for i in value_today:
 		value_today = value_today.replace(str(i),float(i))
 			
-	values = [value_price,value_today]
-	values = pd.DataFrame(values).transpose()
+	#values = [value_price,value_today]
+	values = value_price
+	#values = pd.DataFrame(values).transpose()
 	values =(values - values.mean())/values.std()
 
 	m = len(values)
@@ -102,8 +104,6 @@ def gradient_descent():
 	num_iterations = 20
 	
 	theta_descent = np.zeros(len(features.columns))
-	print(features_array.shape)
-	print(theta_descent.shape)
 	cost_history = []
 
 	for i in range(num_iterations):
@@ -114,8 +114,7 @@ def gradient_descent():
 		cost_history.append(cost)
 
 	cost_history = pd.Series(cost_history)
-	predictions = np.dot(features_array, theta_descent)
-
+	predictions = np.dot(features_array, theta_descent).transpose()
 	print('============================================')
 	print('Cost History: ', cost_history)
 	print('Predictions: ',predictions)
