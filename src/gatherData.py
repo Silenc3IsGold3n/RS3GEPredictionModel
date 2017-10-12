@@ -75,7 +75,7 @@ def run(url,page,lockobject):
 	cur = con.cursor()
 	date = time.strftime("%d_%m_%Y")
 	cur.execute("create table if not exists item_Record_"+date+" (Id int, Type text ,Name text,Current_trend text,Current_price int, Today_trend text, Today_price text, Members bool)")
-	#cur.execute("create table if not exists item_Record_08_10_2017 (Id int, Type text ,Name text,Current_trend text,Current_price int, Today_trend text, Today_price text, Members bool)")
+	#cur.execute("create table if not exists item_Record_08_11_2017 (Id int, Type text ,Name text,Current_trend text,Current_price int, Today_trend text, Today_price text, Members bool)")
 	for i in data:	
 		#icon = data['icon']
 		#icon_large = data['icon_large']
@@ -91,12 +91,12 @@ def run(url,page,lockobject):
 		
 		#Check if item is already in database then 
 		sqlq = "SELECT COUNT(1) FROM item_Record_" +date+ " WHERE Id = ?"
-		#sqlq = "SELECT COUNT(1) FROM item_Record_08_10_2017 WHERE Id = ?"
+		#sqlq = "SELECT COUNT(1) FROM item_Record_08_11_2017 WHERE Id = ?"
 		cur.execute(sqlq,(id,))
 		if not cur.fetchone()[0]:
 			print('Inserting item id = ' + str(id) +' into database.')
 			sql = "INSERT INTO item_Record_"+date+ " VALUES (?,?,?,?,?,?,?,?)"
-			#sql = "INSERT INTO item_Record_08_10_2017 VALUES (?,?,?,?,?,?,?,?)"
+			#sql = "INSERT INTO item_Record_08_11_2017 VALUES (?,?,?,?,?,?,?,?)"
 			#lockobject.acquire()
 			cur.execute(sql,(item_Record.Id,item_Record.Type,item_Record.Name,item_Record.Current_trend,item_Record.Current_price,item_Record.Today_trend,item_Record.Today_price,item_Record.Members))
 			con.commit()
