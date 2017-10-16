@@ -33,15 +33,14 @@ def cost():
 def gradient_descent():
 	global traindataframes
 	global testDataFrame
+	prediction_frame = testDataFrame[0]
+	prediction_frame = prediction_frame['Current_price']
 	
-	#get initial data
 	initial_df = traindataframes[0]
-	id_col = initial_df['Id']
-	price_col = initial_df['Current_price']
-	trend_col = initial_df['Current_trend']
-	today_price_col = initial_df['Today_price']
-	today_trend_col = initial_df['Today_trend']
 	
+	price_col = initial_df['Current_price']
+	
+	'''
 	#remove +signs
 	for i in today_price_col:
 		if '+' in i:
@@ -50,13 +49,13 @@ def gradient_descent():
 	#convert to floats
 	for i in today_price_col:
 		today_price_col = today_price_col.replace(str(i),float(i))
-	
+	'''
 	
 	#make the size(rows)equal to the other data sets
 	a = [0.0]
 	df = pd.DataFrame(a)
 	price_col = price_col.append(df,ignore_index = True)
-	today_price_col = today_price_col.append(df,ignore_index = True)
+	#today_price_col = today_price_col.append(df,ignore_index = True)
 	
 	#print(today_price_col)
 	#print('==================================================================')
@@ -65,21 +64,14 @@ def gradient_descent():
 	#print(today_price_col)
 	#print('==================================================================')
 	
-	#convert data into usable form and put into dataframe
-	#frames = [price_col,today_price_col]
-	frames = [price_col[0:20]]
-	#frames = [price_col]
-	data_df = pd.concat(frames,axis=1)
 	
-	#get features
-	features = data_df
-	features = (features - features.mean())/features.std()
-	
-	#values
+	#features 2
 	value_df = traindataframes[1]
-	value_price = value_df['Current_price']
-	value_today = value_df['Today_price']
+	price_col_two = value_df['Current_price']
 	
+	value_df2 = traindataframes[2]
+	price_col_three = value_df2['Current_price']
+	'''
 	#remove +signs
 	for i in value_today:
 		if '+' in i:
@@ -88,26 +80,48 @@ def gradient_descent():
 	#convert to floats
 	for i in value_today:
 		value_today = value_today.replace(str(i),float(i))
+	'''
+	frames = []
+	for i in traindataframes:
+		temp = i['Current_price']
+		frames.append(temp[0:100])
+	t = testDataFrame[0]
+	t = t['Current_price']
+	frames.append(t[0:100])
+	#frames = [price_col[0:20],price_col_two[0:20],price_col_three[0:20]]
+	print(frames)
+	data_df = pd.concat(frames,axis=1)
+	data_df.columns = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22']
+	print(data_df)
+	
+	#get features
+	features = data_df
+	features = (features - features.mean())/features.std()
+	
+	
 			
 	#values = [value_price,value_today]
-	values = value_price[0:20]
-	#values = pd.DataFrame(values).transpose()
-	values =(values - values.mean())/values.std()
+	#values = price_col_two[0:20]
 
-	m = len(values)
+	#values = pd.DataFrame(values).transpose()
+	#values = (values - values.mean())/values.std()
+
+	
 	#features['ones'] = np.ones(m)
 	
 
 	features_array = np.array(features)
-	values_array = np.array(values)
-	
-	alpha = 0.1
-	num_iterations = 20
+	#values_array = np.array(values)
+	values_array = np.random.random_sample(100)
+	m = len(values_array)
+	alpha = 0.01
+	num_iterations = 500
 	
 	theta_descent = np.zeros(len(features.columns))
 	cost_history = []
 
 	for i in range(num_iterations):
+		#print('Iteration: ' + str(i))
 		predicted_value = np.dot(features_array, theta_descent)
 		theta_descent = theta_descent + alpha/m * np.dot(values_array - predicted_value, features_array)
 		sum_of_square_errors = np.square(np.dot(features_array, theta_descent) - values_array).sum()
@@ -124,22 +138,21 @@ def gradient_descent():
 			#print(i)
 	print('Alpha: ', alpha)
 	print('Iterations: ',num_iterations)
-	#===========================
-	#7 ===================================
-	data_predictions = np.sum((values - predictions)**2)
-	mean = np.mean(values)
-	sq_mean = np.sum((values - mean)**2)
+	df = frames[-1:]
+	data_predictions = np.sum((df - predictions)**2)
+	mean = np.mean(df)
+	sq_mean = np.sum((df - mean)**2)
 
 	r = 1 - data_predictions / sq_mean
 	print('R: ', r)
 	print()
-	plt.title('Gradient Descent Cost History')
-	fig = plt.figure(figsize = (8,6))
-	#ax = fig.add_subplot(111)
-	#ax.plot(cost_history,'o',markersize = 8, color = 'blue', alpha = 0.5,label = 'group1')
-	#plt.show()
-	ax2 = fig.add_subplot(111)
-	ax2.plot(predictions,'o',markersize = 8, color = 'blue', alpha = 0.5,label = 'group2')
+	print(df)
+	plot_prediction = np.add(df[0],predictions)
+	fig, ax = plt.subplots()
+	#ax.plot(prediction_frame[0:100],'o',markersize = 1, color = 'green')
+	ax.plot(plot_prediction,'o',markersize = 1, color = 'blue')
+	fig2, ax2 = plt.subplots()
+	ax2.plot(cost_history,'o',markersize = 1, color = 'blue')
 	plt.show()
 	
 def get_Data():
