@@ -66,7 +66,8 @@ def gradient_descent():
 	#print('==================================================================')
 	
 	#convert data into usable form and put into dataframe
-	frames = [price_col,today_price_col]
+	#frames = [price_col,today_price_col]
+	frames = [price_col[0:20]]
 	#frames = [price_col]
 	data_df = pd.concat(frames,axis=1)
 	
@@ -89,7 +90,7 @@ def gradient_descent():
 		value_today = value_today.replace(str(i),float(i))
 			
 	#values = [value_price,value_today]
-	values = value_price
+	values = value_price[0:20]
 	#values = pd.DataFrame(values).transpose()
 	values =(values - values.mean())/values.std()
 
@@ -118,6 +119,9 @@ def gradient_descent():
 	print('============================================')
 	print('Cost History: ', cost_history)
 	print('Predictions: ',predictions)
+	#with pd.option_context('display.max_columns', 1000,'display.max_rows',20,'display.width', 10000):
+		#for i in predictions:
+			#print(i)
 	print('Alpha: ', alpha)
 	print('Iterations: ',num_iterations)
 	#===========================
@@ -129,8 +133,15 @@ def gradient_descent():
 	r = 1 - data_predictions / sq_mean
 	print('R: ', r)
 	print()
-
-
+	plt.title('Gradient Descent Cost History')
+	fig = plt.figure(figsize = (8,6))
+	#ax = fig.add_subplot(111)
+	#ax.plot(cost_history,'o',markersize = 8, color = 'blue', alpha = 0.5,label = 'group1')
+	#plt.show()
+	ax2 = fig.add_subplot(111)
+	ax2.plot(predictions,'o',markersize = 8, color = 'blue', alpha = 0.5,label = 'group2')
+	plt.show()
+	
 def get_Data():
         global traindataframes
         global testDataFrame
