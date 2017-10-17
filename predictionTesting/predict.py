@@ -84,14 +84,11 @@ def gradient_descent():
 	frames = []
 	for i in traindataframes:
 		temp = i['Current_price']
-		frames.append(temp[0:100])
-	t = testDataFrame[0]
-	t = t['Current_price']
-	frames.append(t[0:100])
+		frames.append(temp[0:25])
 	#frames = [price_col[0:20],price_col_two[0:20],price_col_three[0:20]]
 	print(frames)
 	data_df = pd.concat(frames,axis=1)
-	data_df.columns = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22']
+	data_df.columns = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21']
 	print(data_df)
 	
 	#get features
@@ -112,7 +109,7 @@ def gradient_descent():
 
 	features_array = np.array(features)
 	#values_array = np.array(values)
-	values_array = np.random.random_sample(100)
+	values_array = np.random.random_sample(25)
 	m = len(values_array)
 	alpha = 0.01
 	num_iterations = 500
@@ -149,7 +146,7 @@ def gradient_descent():
 	print(df)
 	plot_prediction = np.add(df[0],predictions)
 	fig, ax = plt.subplots()
-	#ax.plot(prediction_frame[0:100],'o',markersize = 1, color = 'green')
+	ax.plot(prediction_frame[0:25],'o',markersize = 1, color = 'green')
 	ax.plot(plot_prediction,'o',markersize = 1, color = 'blue')
 	fig2, ax2 = plt.subplots()
 	ax2.plot(cost_history,'o',markersize = 1, color = 'blue')
