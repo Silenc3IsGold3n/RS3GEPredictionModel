@@ -50,27 +50,6 @@ def gradient_descent():
 	for i in today_price_col:
 		today_price_col = today_price_col.replace(str(i),float(i))
 	'''
-	
-	#make the size(rows)equal to the other data sets
-	a = [0.0]
-	df = pd.DataFrame(a)
-	price_col = price_col.append(df,ignore_index = True)
-	#today_price_col = today_price_col.append(df,ignore_index = True)
-	
-	#print(today_price_col)
-	#print('==================================================================')
-	
-	#print(price_col)
-	#print(today_price_col)
-	#print('==================================================================')
-	
-	
-	#features 2
-	value_df = traindataframes[1]
-	price_col_two = value_df['Current_price']
-	
-	value_df2 = traindataframes[2]
-	price_col_three = value_df2['Current_price']
 	'''
 	#remove +signs
 	for i in value_today:
@@ -84,9 +63,8 @@ def gradient_descent():
 	frames = []
 	for i in traindataframes:
 		temp = i['Current_price']
-		frames.append(temp[0:25])
-	#frames = [price_col[0:20],price_col_two[0:20],price_col_three[0:20]]
-	print(frames)
+		frames.append(temp[0:50])
+	#print(frames)
 	data_df = pd.concat(frames,axis=1)
 	data_df.columns = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21']
 	print(data_df)
@@ -94,27 +72,23 @@ def gradient_descent():
 	#get features
 	features = data_df
 	features = (features - features.mean())/features.std()
-	
-	
-			
-	#values = [value_price,value_today]
-	#values = price_col_two[0:20]
-
-	#values = pd.DataFrame(values).transpose()
-	#values = (values - values.mean())/values.std()
-
-	
-	#features['ones'] = np.ones(m)
-	
-
 	features_array = np.array(features)
-	#values_array = np.array(values)
-	values_array = np.random.random_sample(25)
+	
+	values_array = np.random.random_sample(50)
+	#values_array = prediction_frame[0:50]
+	values_array = (values_array - values_array.mean())/values_array.std()
+	values_array = np.array(values_array)
 	m = len(values_array)
 	alpha = 0.01
-	num_iterations = 500
+	num_iterations = 100
 	
 	theta_descent = np.zeros(len(features.columns))
+	
+	'''theta_descent = [ 0.04983402,  0.04984066,  0.04997515,  0.0499784,   0.0002391,   0.04998249,
+	0.04996475,  0.05001895,  0.05001934 , 0.04997175,  0.04997307,  0.04997442,
+	0.04998315, 0.05007499,  0.05008444,  0.05008444,  0.05002506,  0.05002304,
+	0.05002437,  0.05002436,  0.05018056]
+	'''
 	cost_history = []
 
 	for i in range(num_iterations):
@@ -130,23 +104,22 @@ def gradient_descent():
 	print('============================================')
 	print('Cost History: ', cost_history)
 	print('Predictions: ',predictions)
-	#with pd.option_context('display.max_columns', 1000,'display.max_rows',20,'display.width', 10000):
-		#for i in predictions:
-			#print(i)
+	print('Theta Descent: ',theta_descent)
 	print('Alpha: ', alpha)
 	print('Iterations: ',num_iterations)
-	df = frames[-1:]
-	data_predictions = np.sum((df - predictions)**2)
-	mean = np.mean(df)
-	sq_mean = np.sum((df - mean)**2)
-
+	
+	data_predictions = np.sum((values_array - predictions)**2)
+	mean = np.mean(values_array)
+	sq_mean = np.sum((values_array - mean)**2)
 	r = 1 - data_predictions / sq_mean
 	print('R: ', r)
 	print()
-	print(df)
+	print('============================================')
+	
+	df = frames[-1:]
 	plot_prediction = np.add(df[0],predictions)
 	fig, ax = plt.subplots()
-	ax.plot(prediction_frame[0:25],'o',markersize = 1, color = 'green')
+	ax.plot(prediction_frame[0:50],'o',markersize = 1, color = 'green')
 	ax.plot(plot_prediction,'o',markersize = 1, color = 'blue')
 	fig2, ax2 = plt.subplots()
 	ax2.plot(cost_history,'o',markersize = 1, color = 'blue')
@@ -159,8 +132,7 @@ def get_Data():
         con = sqlite3.connect("GE_Data.db")
         cur = con.cursor()
         table = cur.execute("select name from sqlite_master where type = 'table'")
-       # print('Tables in db: ' + str(tables.fetchall()))
-       # print(tables.fetchall())
+      
         for i in table.fetchall():
                 tables.append(i[0])
         for i in tables[:-1]:
@@ -173,15 +145,6 @@ def get_Data():
                 testDataFrame.append(pd.read_sql(q,con))
         cur.close()
         con.close()
-       # with pd.option_context('display.max_columns', 1000,'display.max_rows',20,'display.width', 10000):
-               # for i in dataframes:
-                     #   print('DF')
-                     #   print(i)
-               # print('TestDF')
-               # print(testDataFrame)
-               # for i in dataframes:
-                        #print(i)
-
 	
 get_Data()
 gradient_descent()
