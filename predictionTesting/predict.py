@@ -40,16 +40,10 @@ def gradient_descent():
 	
 	price_col = initial_df['Current_price']
 	
-	'''
-	#remove +signs
-	for i in today_price_col:
-		if '+' in i:
-			temp = i.replace('+','')
-			today_price_col = today_price_col.replace(str(i),temp)
-	#convert to floats
-	for i in today_price_col:
-		today_price_col = today_price_col.replace(str(i),float(i))
-	'''
+	
+
+
+	
 	'''
 	#remove +signs
 	for i in value_today:
@@ -64,6 +58,18 @@ def gradient_descent():
 	for i in traindataframes:
 		temp = i['Current_price']
 		frames.append(temp[0:50])
+		
+	'''	#remove +signs
+	for i in frames:
+		for j in i:
+			if '+' in j:
+				temp = j.replace('+','')
+				j = j.replace(str(i),temp)	
+	#convert to floats
+	for i in frames:
+		for j in i:
+			j = j.replace(str(j),float(j))
+			'''
 	#print(frames)
 	data_df = pd.concat(frames,axis=1)
 	data_df.columns = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21']
@@ -74,8 +80,8 @@ def gradient_descent():
 	features = (features - features.mean())/features.std()
 	features_array = np.array(features)
 	
-	values_array = np.random.random_sample(50)
-	#values_array = prediction_frame[0:50]
+	#values_array = np.random.random_sample(50)
+	values_array = prediction_frame[0:50]
 	values_array = (values_array - values_array.mean())/values_array.std()
 	values_array = np.array(values_array)
 	m = len(values_array)
