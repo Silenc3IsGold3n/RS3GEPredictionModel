@@ -20,7 +20,7 @@ traindataframes = []
 testDataFrame = []
 
 #this defines how many items we are looking at
-max = 50
+max = 10
 
 
 #def predict_next_day():
@@ -96,10 +96,12 @@ def gradient_descent():
 		frames.append([normalized_features, trend_feature])
 		
 		
-	#get features	
-	features = pd.DataFrame(frames).transpose()
-	features_array = np.array(features)
-	print(features)
+	#get features
+	#print(frames)
+	#features = pd.DataFrame(frames)
+	features = frames
+	features_array = np.array(features).transpose()
+	
 	
 	#same as above we are normalizing the values
 	frames = []
@@ -144,16 +146,27 @@ def gradient_descent():
 	num_iterations = 1000000
 	#print(len(features.columns))
 	#print(features)
-	theta_descent = np.zeros([len(features.columns),len(features[0])])
-	#theta_descent = np.zeros(len(features.columns))
-	#print(theta_descent)
+	#theta_descent = np.zeros([len(features),len(features[0]),len(features[0][0])])
+	theta_descent = np.zeros([len(features),len(features)])
+	#print(features_array.shape)
+	#print(theta_descent.shape)
+	#print(values_array.shape)
+	#print(theta_descent.shape)
 	cost_history = []
 	
 	#actual gradient descent part
 	for i in range(num_iterations):
+		#predicted_value = np.einsum('ijk,jil->kl',features_array,values_array)
 		#predicted_value = np.tensordot(features_array, theta_descent)
-		predicted_value = np.inner(features_array, theta_descent)
-		theta_descent = theta_descent + alpha/m * np.dot(values_array - predicted_value, features_array)
+		#predicted_value = np.inner(features_array, theta_descent)
+		
+		#predicted value is feature1 * theta 2 ect we need to do that
+		predicted_value = np.dot(features_array, theta_descent)
+		print(predicted_value.shape)
+		values_array_subbed = (values_array[0] - predicted_value).transpose()
+		print(values_array_subbed.shape)
+		theta_descent = theta_descent + alpha/m * np.dot(values_array_subbed, features_array)
+		print(theta_descent.shape)
 		sum_of_square_errors = np.square(np.dot(features_array, theta_descent) - values_array).sum()
 		cost = sum_of_square_errors / (2 * m)
 		cost_history.append(cost)
