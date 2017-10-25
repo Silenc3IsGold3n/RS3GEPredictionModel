@@ -19,17 +19,21 @@ from sklearn.pipeline import make_pipeline
 traindataframes = []
 testDataFrame = []
 
+#this defines how many items we are looking at
+max = 50
+
+
 #def predict_next_day():
 	#return 0
+	
 def denormalize_features(features):
 	frames = []
 	for i,r in enumerate(traindataframes):
 		denormalized_features = []
 		price_col = r['Current_price']
-		price_col = price_col[0:50]
+		price_col = price_col[0:max]
 		change_col = r['Today_price']
-		change_col = change_col[0:50]
-		
+		change_col = change_col[0:max]
 		#parse data and remove + sign
 		for j in change_col:
 			if '+' in j:
@@ -40,8 +44,6 @@ def denormalize_features(features):
 			
 		for j,element in enumerate(price_col): 
 			initial_price = element - change_col[j]
-			#closing_price = element 
-			#normalized = ((closing_price/initial_price)-1)
 			closing_price = (features[i][j] + 1) * initial_price
 			denormalized_features.append(closing_price)	
 		frames.append(denormalized_features)
@@ -55,19 +57,22 @@ def gradient_descent():
 	global testDataFrame
 	prediction_frame = testDataFrame[0]
 	prediction_frame = prediction_frame['Current_price']
-	prediction_frame = prediction_frame[0:50]
+	prediction_frame = prediction_frame[0:max]
 	
 	#this takes the closing price and the initial price Current_price = initial today price is the change is price 
 	#that day. So we take closing minus today change to get initial
 	#we then normalize this data
 	frames = []
+
 	for i in traindataframes:
 		normalized_features = []
+		trend_feature = []
 		price_col = i['Current_price']
-		price_col = price_col[0:50]
+		price_col = price_col[0:max]
 		change_col = i['Today_price']
-		change_col = change_col[0:50]
-		
+		change_col = change_col[0:max]
+		today_trend = i['Today_trend']
+		today_trend = today_trend[0:max]
 		#parse data and remove + sign
 		for j in change_col:
 			if '+' in j:
@@ -80,21 +85,33 @@ def gradient_descent():
 			initial_price = element - change_col[j]
 			closing_price = element 
 			normalized = ((closing_price/initial_price)-1)
-			normalized_features.append(normalized)	
-		frames.append(normalized_features)
+			normalized_features.append(normalized)
+		for j in today_trend:
+			if (j == 'neutral'):
+				trend_feature.append(float(0))
+			elif(j == 'positive'):
+				trend_feature.append(float(1))
+			elif(j == 'negative'):
+				trend_feature.append(float(-1))
+		frames.append([normalized_features, trend_feature])
+		
 		
 	#get features	
 	features = pd.DataFrame(frames).transpose()
 	features_array = np.array(features)
+	print(features)
 	
-	#same as above we ar normalizing the values
+	#same as above we are normalizing the values
 	frames = []
-	normalized_features = []
-	
+	normalized_values = []
+	trend_values = []
 	prediction_frame_change = testDataFrame[0]
 	prediction_frame_change = prediction_frame_change['Today_price']
-	prediction_frame_change = prediction_frame_change[0:50]
-	
+	prediction_frame_change = prediction_frame_change[0:max]
+	today_trend = testDataFrame[0]
+	today_trend = today_trend['Today_trend']
+	today_trend = today_trend[0:max]
+
 	#parse data and remove + sign
 	for i in prediction_frame_change:
 		if '+' in i:
@@ -107,32 +124,35 @@ def gradient_descent():
 		initial_price = element - prediction_frame_change[i]
 		closing_price = element 
 		normalized = ((closing_price/initial_price)-1)
-		'''
-		print('closing_price: ' + str(closing_price))
-		#print('todays_change: ' + str())
-		print('normalized_price: ' + str(normalized))
-		denormalized = (normalized + 1) * initial_price
-		print('denormalized_price: ' + str(denormalized))
-		'''
-		normalized_features.append(normalized)
-	for i in normalized_features:
-		frames.append(i)
+		normalized_values.append(normalized)
+	for j in today_trend:
+		if (j == 'neutral'):
+			trend_values.append(float(0))
+		elif(j == 'positive'):
+			trend_values.append(float(1))
+		elif(j == 'negative'):
+			trend_values.append(float(-1))
+	#for i in normalized_values:
+	frames.append([normalized_values,trend_values])
 	
+	#===========================================
 	#get values
 	values_array = np.array(frames)
-	
 	
 	m = len(values_array)
 	alpha = 0.01
 	num_iterations = 1000000
-	
-	theta_descent = np.zeros(len(features.columns))
-	
+	#print(len(features.columns))
+	#print(features)
+	theta_descent = np.zeros([len(features.columns),len(features[0])])
+	#theta_descent = np.zeros(len(features.columns))
+	#print(theta_descent)
 	cost_history = []
 	
 	#actual gradient descent part
 	for i in range(num_iterations):
-		predicted_value = np.dot(features_array, theta_descent)
+		#predicted_value = np.tensordot(features_array, theta_descent)
+		predicted_value = np.inner(features_array, theta_descent)
 		theta_descent = theta_descent + alpha/m * np.dot(values_array - predicted_value, features_array)
 		sum_of_square_errors = np.square(np.dot(features_array, theta_descent) - values_array).sum()
 		cost = sum_of_square_errors / (2 * m)
