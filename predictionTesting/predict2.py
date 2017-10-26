@@ -127,7 +127,6 @@ def gradient_descent():
 	num_iterations = 1000000
 	
 	theta_descent = np.zeros(len(features.columns))
-	
 	cost_history = []
 	
 	#actual gradient descent part
@@ -137,7 +136,7 @@ def gradient_descent():
 		sum_of_square_errors = np.square(np.dot(features_array, theta_descent) - values_array).sum()
 		cost = sum_of_square_errors / (2 * m)
 		cost_history.append(cost)
-
+		print('Iteration: ' + str(i) + ' : ' + 'Cost: ' + str(cost_history[i]))
 		
 	#all output and debugging 
 	cost_history = pd.Series(cost_history)

@@ -28,12 +28,16 @@ max = 10
 	
 def denormalize_features(features):
 	frames = []
+
 	for i,r in enumerate(traindataframes):
 		denormalized_features = []
+		trend_feature = []
 		price_col = r['Current_price']
 		price_col = price_col[0:max]
 		change_col = r['Today_price']
 		change_col = change_col[0:max]
+		today_trend = r['Today_trend']
+		today_trend = today_trend[0:max]
 		#parse data and remove + sign
 		for j in change_col:
 			if '+' in j:
@@ -44,13 +48,39 @@ def denormalize_features(features):
 			
 		for j,element in enumerate(price_col): 
 			initial_price = element - change_col[j]
-			closing_price = (features[i][j] + 1) * initial_price
-			denormalized_features.append(closing_price)	
-		frames.append(denormalized_features)
+			closing_price = (features[i][0][j] + 1) * initial_price
+			denormalized_features.append(float(closing_price))	
 		
-	features = pd.DataFrame(frames).transpose()
+		for j in today_trend:
+			if (j == 'neutral'):
+				trend_feature.append(float(0))
+			elif(j == 'positive'):
+				trend_feature.append(float(1))
+			elif(j == 'negative'):
+				trend_feature.append(float(-1))
+		frames.append([denormalized_features, trend_feature])
+		
+
+	features = frames
+	#features = pd.DataFrame(frames)
+	features = np.array(features)
 	
 	return features
+	
+	
+	
+	
+	
+	
+def predicted(features_array,theta_descent):
+	predict = []
+	predicted_value = (features_array[0][0] * theta_descent[0][0]) + (features_array[0][1] * theta_descent[1][0])
+	for n in range(1,len(features_array)):
+		predicted_value = predicted_value + (features_array[n][0] * theta_descent[0][n]) + (features_array[n][1] * theta_descent[1][n])
+		predict = predicted_value
+	
+	return predict
+	
 	
 def gradient_descent():
 	global traindataframes
@@ -97,11 +127,14 @@ def gradient_descent():
 		
 		
 	#get features
-	#print(frames)
-	#features = pd.DataFrame(frames)
 	features = frames
-	features_array = np.array(features).transpose()
+	features_array = np.array(features)
 	
+	'''
+	The features array is a 3-dimentional array where 
+	features[values of items over all day as in 0 is item 1's features][feature][value]
+	
+	'''
 	
 	#same as above we are normalizing the values
 	frames = []
@@ -110,10 +143,6 @@ def gradient_descent():
 	prediction_frame_change = testDataFrame[0]
 	prediction_frame_change = prediction_frame_change['Today_price']
 	prediction_frame_change = prediction_frame_change[0:max]
-	today_trend = testDataFrame[0]
-	today_trend = today_trend['Today_trend']
-	today_trend = today_trend[0:max]
-
 	#parse data and remove + sign
 	for i in prediction_frame_change:
 		if '+' in i:
@@ -127,55 +156,53 @@ def gradient_descent():
 		closing_price = element 
 		normalized = ((closing_price/initial_price)-1)
 		normalized_values.append(normalized)
-	for j in today_trend:
-		if (j == 'neutral'):
-			trend_values.append(float(0))
-		elif(j == 'positive'):
-			trend_values.append(float(1))
-		elif(j == 'negative'):
-			trend_values.append(float(-1))
-	#for i in normalized_values:
-	frames.append([normalized_values,trend_values])
 	
-	#===========================================
+	for i in normalized_values:
+		frames.append(i)
+	
+	
 	#get values
 	values_array = np.array(frames)
 	
+	#===================================================================================================
+	
 	m = len(values_array)
 	alpha = 0.01
-	num_iterations = 1000000
-	#print(len(features.columns))
-	#print(features)
-	#theta_descent = np.zeros([len(features),len(features[0]),len(features[0][0])])
-	theta_descent = np.zeros([len(features),len(features)])
-	#print(features_array.shape)
-	#print(theta_descent.shape)
-	#print(values_array.shape)
-	#print(theta_descent.shape)
+	num_iterations = 1000
+	
+	#2 is the number of features
+	theta_descent = np.zeros([2,len(features_array)])
 	cost_history = []
 	
 	#actual gradient descent part
 	for i in range(num_iterations):
-		#predicted_value = np.einsum('ijk,jil->kl',features_array,values_array)
-		#predicted_value = np.tensordot(features_array, theta_descent)
-		#predicted_value = np.inner(features_array, theta_descent)
 		
-		#predicted value is feature1 * theta 2 ect we need to do that
-		predicted_value = np.dot(features_array, theta_descent)
-		print(predicted_value.shape)
-		values_array_subbed = (values_array[0] - predicted_value).transpose()
-		print(values_array_subbed.shape)
-		theta_descent = theta_descent + alpha/m * np.dot(values_array_subbed, features_array)
-		print(theta_descent.shape)
-		sum_of_square_errors = np.square(np.dot(features_array, theta_descent) - values_array).sum()
+		#hypothesis
+		predicted_value = predicted(features_array, theta_descent)
+		
+		#loss
+		loss = (predicted_value - values_array)	
+		#http://www.ritchieng.com/multi-variable-linear-regression/
+		#https://www.coursera.org/learn/machine-learning/lecture/Z9DKX/gradient-descent-for-multiple-variables
+		#product
+		print(features[0])
+		gradient = loss * features_array
+		
+		#theta_descent = theta_descent + alpha/m * np.dot(values_array - predicted_value, features_array)
+		#update theta_descent
+		theta_descent = (theta_descent - (alpha/m))* gradient
+	
+		#square errors
+		sum_of_square_errors = np.square(predicted(features_array, theta_descent) - values_array).sum()
+		
 		cost = sum_of_square_errors / (2 * m)
 		cost_history.append(cost)
-
+		print('Iteration: ' + str(i) + ' : ' + 'Cost: ' + str(cost_history[i]))
 		
 	#all output and debugging 
 	cost_history = pd.Series(cost_history)
 	
-	predictions = np.dot(features_array, theta_descent).transpose()
+	predictions = predicted(features_array, theta_descent)
 	print('============================================')
 	print('Cost History: ', cost_history)
 	print('Theta Descent: ',theta_descent)
@@ -192,12 +219,13 @@ def gradient_descent():
 	
 	#denormalize data
 	features = denormalize_features(features)
-	predictions = np.dot(features, theta_descent).transpose()
+	predictions = predicted(features, theta_descent)
 	print('Predictions: ',predictions)
 	print('============================================')
 	
-	day_before = features.transpose()
-	day_before = day_before[-1:]
+	day_before = features
+	day_before = day_before[-1:][0][0]
+	
 	day_before = day_before.transpose()
 	fig, ax = plt.subplots()
 	ax.plot(prediction_frame,'o',markersize = 1, color = 'green', label = 'Actual Price')
@@ -206,6 +234,8 @@ def gradient_descent():
 	fig2, ax2 = plt.subplots()
 	ax2.plot(cost_history,'o',markersize = 1, color = 'blue')
 	plt.show()
+	#===================================================================================================
+	
 	
 def get_Data():
         global traindataframes
