@@ -181,7 +181,7 @@ def gradient_descent():
 		predicted_value = predicted(features_array, theta_descent)
 		
 		#loss
-		loss = (predicted_value - values_array)	
+		loss = (values_array - predicted_value)	
 		#http://www.ritchieng.com/multi-variable-linear-regression/
 		#https://www.coursera.org/learn/machine-learning/lecture/Z9DKX/gradient-descent-for-multiple-variables
 		#product

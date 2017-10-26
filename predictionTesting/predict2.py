@@ -136,7 +136,9 @@ def gradient_descent():
 		sum_of_square_errors = np.square(np.dot(features_array, theta_descent) - values_array).sum()
 		cost = sum_of_square_errors / (2 * m)
 		cost_history.append(cost)
-		print('Iteration: ' + str(i) + ' : ' + 'Cost: ' + str(cost_history[i]))
+		#this cause lag
+		if(i % 1000 == 0):
+			print('Epoch: ' + str(i/1000) + ' : ' + 'Cost: ' + str(cost_history[i]))
 		
 	#all output and debugging 
 	cost_history = pd.Series(cost_history)
