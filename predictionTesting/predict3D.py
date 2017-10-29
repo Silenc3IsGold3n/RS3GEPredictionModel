@@ -20,7 +20,7 @@ traindataframes = []
 testDataFrame = []
 
 #this defines how many items we are looking at
-max = 10
+max = 20
 
 
 #def predict_next_day():
@@ -71,7 +71,7 @@ def denormalize_features(features):
 	
 	
 	
-	
+'''	
 def predicted(features_array,theta_descent):
 	predict = []
 	predicted_value = (features_array[0][0] * theta_descent[0][0]) + (features_array[0][1] * theta_descent[1][0])
@@ -80,7 +80,48 @@ def predicted(features_array,theta_descent):
 		predict = predicted_value
 	
 	return predict
+'''
+def predicted(features_array,theta_descent):
+	f1 = []
+	f2 = []
+	for i in features_array:
+		f1.append(i[0])
+		f2.append(i[1])
+	theta_one = []
+	theta_two = []
+	for i,r in enumerate(f1):
+		theta_one.append(np.dot(r,theta_descent[0][i]))
+	for i,r in enumerate(f2):
+		theta_two.append(np.dot(r,theta_descent[1][i]))
+	sum1 = np.zeros(len(theta_one[0]))
+	for i in theta_one:
+		sum1 = sum1 + i
+	sum2 = np.zeros(len(theta_two[0]))
+	for i in theta_one:
+		sum2 = sum2 + i
+	predict = sum1 + sum2
+	return predict
 	
+	
+	
+def new_theta(alpha,m,theta_descent,features_array,loss):
+	#theta_descent = theta_descent + alpha/m * np.dot(loss, features_array)
+	theta = theta_descent + (alpha/m)
+	f1 = []
+	f2 = []
+	for i in features_array:
+		f1.append(i[0])
+		f2.append(i[1])
+	theta_one = []
+	theta_two = []
+#still needs more work
+
+	for i,r in enumerate(f1):
+		theta_one.append(np.dot(loss,r))
+	for i,r in enumerate(f2):
+		theta_two.append(np.dot(loss,r))
+	print(theta_one)
+	return 0
 	
 def gradient_descent():
 	global traindataframes
@@ -168,35 +209,29 @@ def gradient_descent():
 	
 	m = len(values_array)
 	alpha = 0.01
-	num_iterations = 1000
+	num_iterations = 10
 	
 	#2 is the number of features
 	theta_descent = np.zeros([2,len(features_array)])
 	cost_history = []
-	
+
 	#actual gradient descent part
 	for i in range(num_iterations):
-		
+	
 		#hypothesis
 		predicted_value = predicted(features_array, theta_descent)
 		
-		#loss
-		loss = (values_array - predicted_value)	
-		#http://www.ritchieng.com/multi-variable-linear-regression/
-		#https://www.coursera.org/learn/machine-learning/lecture/Z9DKX/gradient-descent-for-multiple-variables
-		#product
-		print(features[0])
-		gradient = loss * features_array
-		
-		#theta_descent = theta_descent + alpha/m * np.dot(values_array - predicted_value, features_array)
-		#update theta_descent
-		theta_descent = (theta_descent - (alpha/m))* gradient
-	
-		#square errors
-		sum_of_square_errors = np.square(predicted(features_array, theta_descent) - values_array).sum()
-		
+		#get "corectness"
+		sum_of_square_errors = np.square(predicted_value - values_array).sum()
 		cost = sum_of_square_errors / (2 * m)
 		cost_history.append(cost)
+		
+		loss = (values_array - predicted_value)
+		
+		theta_descent = new_theta(alpha,m,theta_descent,features_array,loss)
+		#theta_descent = theta_descent + alpha/m * np.dot(values_array - predicted_value, features_array)
+		
+		
 		if(i % 1000 == 0):
 			print('Epoch: ' + str(i/1000) + ' : ' + 'Cost: ' + str(cost_history[i]))
 		
