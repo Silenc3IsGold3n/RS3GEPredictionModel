@@ -104,7 +104,7 @@ def predicted(features_array,theta_descent):
 	
 def new_theta(alpha,m,theta_descent,features_array,values_array,predicted_value):
 	#theta_descent = theta_descent + alpha/m * np.dot(values_array - predicted_value, features_array)
-
+	
 	f1 = []
 	f2 = []
 	for i in features_array:
@@ -112,8 +112,10 @@ def new_theta(alpha,m,theta_descent,features_array,values_array,predicted_value)
 		f2.append(i[1])
 	theta_one = []
 	theta_two = []
-
+	predicted_mult_feature_one = []
 	for i,r in enumerate(f1):
+		for j in r:
+			
 		theta_one.append(r * loss)
 	for i,r in enumerate(f2):
 		theta_two.append(r * loss)
@@ -207,6 +209,7 @@ def gradient_descent():
 		closing_price = element 
 		normalized = ((closing_price/initial_price)-1)
 		normalized_values.append(normalized)
+	'''
 	for j in prediction_today_trend:
 			if (j == 'neutral'):
 				trend_values.append(float(0))
@@ -214,13 +217,14 @@ def gradient_descent():
 				trend_values.append(float(1))
 			elif(j == 'negative'):
 				trend_values.append(float(-1))
+	'''
 	#frames.append([normalized_features, trend_values])
-	#for i in normalized_values:
-		#frames.append(i)
+	for i in normalized_values:
+		frames.append(i)
 	
 	
 	#get values
-	values_array = np.array([normalized_features, trend_values])
+	values_array = np.array(frames)
 
 	#===================================================================================================
 	
@@ -244,7 +248,6 @@ def gradient_descent():
 		cost_history.append(cost)
 		
 		#next theta
-		loss = (values_array - predicted_value)
 		theta_descent = new_theta(alpha,m,theta_descent,features_array,values_array,predicted_value)
 		#theta_descent = theta_descent + alpha/m * np.dot(values_array - predicted_value, features_array)
 		
@@ -282,7 +285,7 @@ def gradient_descent():
 	day_before = day_before.transpose()
 	fig, ax = plt.subplots()
 	ax.plot(prediction_frame,'o',markersize = 1, color = 'green', label = 'Actual Price')
-	ax.plot(predictions,'o',markersize = 1, color = 'blue', label = 'Predicted Price')
+	ax.plot(predictions[0],'o',markersize = 1, color = 'blue', label = 'Predicted Price')
 	ax.plot(day_before,'o',markersize = 1, color = 'red', label = 'Price Previously')
 	fig2, ax2 = plt.subplots()
 	ax2.plot(cost_history,'o',markersize = 1, color = 'blue')
