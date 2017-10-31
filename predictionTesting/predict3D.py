@@ -20,7 +20,7 @@ traindataframes = []
 testDataFrame = []
 
 #this defines how many items we are looking at
-max = 5
+max = 1000
 
 
 #def predict_next_day():
@@ -107,28 +107,31 @@ def new_theta(alpha,m,theta_descent,features_array,values_array,predicted_value)
 	
 	f1 = []
 	f2 = []
+	#print('values', values_array)
+	loss = values_array - predicted_value
+	#print('loss',loss)
 	for i in features_array:
 		f1.append(i[0])
 		f2.append(i[1])
 	theta_one = []
 	theta_two = []
+	theta_descent_one = []
+	theta_descent_two = []
 	predicted_mult_feature_one = []
-	for i,r in enumerate(f1):
-		for j in r:
-			
+	for r in f1:
+		#print('r',r)
+		#return 0
 		theta_one.append(r * loss)
-	for i,r in enumerate(f2):
+	for r in f2:
 		theta_two.append(r * loss)
-	sum1 = np.zeros(len(theta_one[0]))
-	sum2 = np.zeros(len(theta_two[0]))
-
-	for i in theta_one:
-		sum1 = sum1 + i
-	for i in theta_two:
-		sum2 = sum2 + i	
-	
-	theta_descent_one = theta_descent[0] + alpha/m * sum1.sum()
-	theta_descent_two = theta_descent[1] + alpha/m * sum2.sum()
+	for i in range(0,len(theta_descent[0])):
+	#	print('theta_one', theta_one[i])
+		#print('theta_descent', theta_descent[0][i])
+		#return 0
+		theta_descent_one.append(theta_descent[0][i] + alpha/m * theta_one[i])
+		theta_descent_two.append(theta_descent[1][i] + alpha/m * theta_two[i])
+	#print(np.array(theta_descent_one))
+	#return 0
 	return [theta_descent_one,theta_descent_two]
 	
 	
@@ -230,7 +233,7 @@ def gradient_descent():
 	
 	m = len(values_array)
 	alpha = 0.01
-	num_iterations = 1000
+	num_iterations = 10000
 	
 	#2 is the number of features
 	theta_descent = np.zeros([2,len(features_array),len(features_array[0][0])])
@@ -275,6 +278,7 @@ def gradient_descent():
 	
 	#denormalize data
 	features = denormalize_features(features)
+	print('Values day before: ',features[-1:])
 	predictions = predicted(features, theta_descent)
 	print('Predictions: ',predictions)
 	print('============================================')

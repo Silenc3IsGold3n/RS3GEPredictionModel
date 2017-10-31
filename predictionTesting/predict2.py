@@ -18,7 +18,7 @@ from sklearn.pipeline import make_pipeline
 '''
 traindataframes = []
 testDataFrame = []
-
+max = 2
 #def predict_next_day():
 	#return 0
 def denormalize_features(features):
@@ -26,9 +26,9 @@ def denormalize_features(features):
 	for i,r in enumerate(traindataframes):
 		denormalized_features = []
 		price_col = r['Current_price']
-		price_col = price_col[0:50]
+		price_col = price_col[0:max]
 		change_col = r['Today_price']
-		change_col = change_col[0:50]
+		change_col = change_col[0:max]
 		
 		#parse data and remove + sign
 		for j in change_col:
@@ -55,7 +55,7 @@ def gradient_descent():
 	global testDataFrame
 	prediction_frame = testDataFrame[0]
 	prediction_frame = prediction_frame['Current_price']
-	prediction_frame = prediction_frame[0:50]
+	prediction_frame = prediction_frame[0:max]
 	
 	#this takes the closing price and the initial price Current_price = initial today price is the change is price 
 	#that day. So we take closing minus today change to get initial
@@ -64,9 +64,9 @@ def gradient_descent():
 	for i in traindataframes:
 		normalized_features = []
 		price_col = i['Current_price']
-		price_col = price_col[0:50]
+		price_col = price_col[0:max]
 		change_col = i['Today_price']
-		change_col = change_col[0:50]
+		change_col = change_col[0:max]
 		
 		#parse data and remove + sign
 		for j in change_col:
@@ -93,7 +93,7 @@ def gradient_descent():
 	
 	prediction_frame_change = testDataFrame[0]
 	prediction_frame_change = prediction_frame_change['Today_price']
-	prediction_frame_change = prediction_frame_change[0:50]
+	prediction_frame_change = prediction_frame_change[0:max]
 	
 	#parse data and remove + sign
 	for i in prediction_frame_change:
@@ -124,7 +124,7 @@ def gradient_descent():
 	
 	m = len(values_array)
 	alpha = 0.01
-	num_iterations = 1000000
+	num_iterations = 650000
 	
 	theta_descent = np.zeros(len(features.columns))
 	cost_history = []
@@ -149,19 +149,28 @@ def gradient_descent():
 	print('Theta Descent: ',theta_descent)
 	print('Alpha: ', alpha)
 	print('Iterations: ',num_iterations)
-	
 	data_predictions = np.sum((values_array - predictions)**2)
 	mean = np.mean(values_array)
 	sq_mean = np.sum((values_array - mean)**2)
+	if(sq_mean == 0):
+		sq_mean = sq_mean + 0.0000001
 	r = 1 - data_predictions / sq_mean
 	print('R: ', r)
 	
 
 	
 	#denormalize data
-	features = denormalize_features(features)
-	predictions = np.dot(features, theta_descent).transpose()
+	features = denormalize_features(features).transpose()
+	features = features[-1:]
+	
+	#features = np.array(features)
+	#features = features[0]
+	#predictions = np.dot(features, theta_descent)
+	#final_prediction = []
+	#print('features:',features)
+	#final_prediction.append(features[-1:] + (features[-1:]*predictions))
 	print('Predictions: ',predictions)
+	
 	print('============================================')
 	
 	day_before = features.transpose()
