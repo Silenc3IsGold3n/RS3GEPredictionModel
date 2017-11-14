@@ -18,7 +18,7 @@ from sklearn.pipeline import make_pipeline
 '''
 traindataframes = []
 testDataFrame = []
-max = 2
+max = 20
 #def predict_next_day():
 	#return 0
 def denormalize_features(features):
@@ -124,7 +124,7 @@ def gradient_descent():
 	
 	m = len(values_array)
 	alpha = 0.01
-	num_iterations = 650000
+	num_iterations = 1000000
 	
 	theta_descent = np.zeros(len(features.columns))
 	cost_history = []
@@ -136,7 +136,7 @@ def gradient_descent():
 		sum_of_square_errors = np.square(np.dot(features_array, theta_descent) - values_array).sum()
 		cost = sum_of_square_errors / (2 * m)
 		cost_history.append(cost)
-		#this cause lag
+		#this causes lag
 		if(i % 1000 == 0):
 			print('Epoch: ' + str(i/1000) + ' : ' + 'Cost: ' + str(cost_history[i]))
 		
@@ -160,15 +160,12 @@ def gradient_descent():
 
 	
 	#denormalize data
-	features = denormalize_features(features).transpose()
-	features = features[-1:]
+	features = denormalize_features(features)
 	
 	#features = np.array(features)
 	#features = features[0]
-	#predictions = np.dot(features, theta_descent)
-	#final_prediction = []
-	#print('features:',features)
-	#final_prediction.append(features[-1:] + (features[-1:]*predictions))
+	predictions = np.dot(features, theta_descent)
+
 	print('Predictions: ',predictions)
 	
 	print('============================================')
@@ -180,6 +177,7 @@ def gradient_descent():
 	ax.plot(prediction_frame,'o',markersize = 1, color = 'green', label = 'Actual Price')
 	ax.plot(predictions,'o',markersize = 1, color = 'blue', label = 'Predicted Price')
 	ax.plot(day_before,'o',markersize = 1, color = 'red', label = 'Price Previously')
+	plt.legend()
 	fig2, ax2 = plt.subplots()
 	ax2.plot(cost_history,'o',markersize = 1, color = 'blue')
 	plt.show()
