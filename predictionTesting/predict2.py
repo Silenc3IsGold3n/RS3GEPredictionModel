@@ -124,7 +124,7 @@ def gradient_descent():
 	
 	m = len(values_array)
 	alpha = 0.01
-	num_iterations = 1000000
+	num_iterations = 2000000
 	
 	theta_descent = np.zeros(len(features.columns))
 	cost_history = []

@@ -7,15 +7,6 @@ from scipy import stats
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
-'''
-from sklearn.datasets import make_classification
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import (RandomTreesEmbedding, RandomForestClassifier, GradientBoostingClassifier)
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_curve
-from sklearn.pipeline import make_pipeline
-'''
 traindataframes = []
 testDataFrame = []
 
@@ -66,76 +57,7 @@ def denormalize_features(features):
 	features = np.array(features)
 	
 	return features
-	
-'''
-def predicted(features_array,theta_descent):
-	f1 = []
-	f2 = []
-	for i in features_array:
-		f1.append(i[0])
-		f2.append(i[1])
-	theta_one = []
-	theta_two = []
-	theta_one2 = []
-	theta_two2 = []
-	for i,r in enumerate(f1):
-		theta_one.append(r * theta_descent[0][i])
-	for i,r in enumerate(f2):
-		theta_two.append(r * theta_descent[1][i])
-	for i,r in enumerate(f1):
-		theta_one2.append(r * theta_descent[1][i])
-	for i,r in enumerate(f2):
-		theta_two2.append(r * theta_descent[0][i])
-	sum1 = np.zeros(len(theta_one[0]))
-	sum2 = np.zeros(len(theta_two[0]))
-	sum3 = np.zeros(len(theta_one[0]))
-	sum4 = np.zeros(len(theta_two[0]))
-	for i in theta_one:
-		sum1 = sum1 + i
-	for i in theta_two:
-		sum2 = sum2 + i	
-	for i in theta_one2:
-		sum3 = sum3 + i	
-	for i in theta_two2:
-		sum4 = sum4 + i	
-	predict = (sum1 + sum2 + sum3 + sum4)
-	return predict
-'''
-	
-'''	
-def new_theta(alpha,m,theta_descent,features_array,values_array,predicted_value):
-	#theta_descent = theta_descent + alpha/m * np.dot(values_array - predicted_value, features_array)
-	
-	f1 = []
-	f2 = []
-	#print('values', values_array)
-	loss = values_array - predicted_value
-	#print('loss',loss)
-	for i in features_array:
-		f1.append(i[0])
-		f2.append(i[1])
-	theta_one = []
-	theta_two = []
-	theta_descent_one = []
-	theta_descent_two = []
-	predicted_mult_feature_one = []
-	for r in f1:
-		#print('r',r)
-		#return 0
-		theta_one.append(r * loss)
-	for r in f2:
-		theta_two.append(r * loss)
-	for i in range(0,len(theta_descent[0])):
-	#	print('theta_one', theta_one[i])
-		#print('theta_descent', theta_descent[0][i])
-		#return 0
-		theta_descent_one.append(theta_descent[0][i] + alpha/m * theta_one[i])
-		theta_descent_two.append(theta_descent[1][i] + alpha/m * theta_two[i])
-	#print(np.array(theta_descent_one))
-	#return 0
-	return [theta_descent_one,theta_descent_two]
-'''	
-	
+
 def gradient_descent():
 	global traindataframes
 	global testDataFrame
@@ -143,10 +65,12 @@ def gradient_descent():
 	prediction_frame = prediction_frame['Current_price']
 	prediction_frame = prediction_frame[predicted_Item:predicted_Item+1]
 	prediction_frame = prediction_frame[predicted_Item]
+	
+	#=================================================================================================
+	#get features
 	#this takes the closing price and the initial price Current_price = initial today price is the change is price 
 	#that day. So we take closing minus today change to get initial
 	#we then normalize this data
-	#frames = []
 	normalized_features = []
 	trend_feature = []
 	for i in traindataframes:
@@ -223,33 +147,32 @@ def gradient_descent():
 	#===================================================================================================
 	
 	m = 1
-	alpha = 0.0001
-	num_iterations = 10000
+	alpha = 0.00001
+	num_iterations = 10
 	
 	#2 is the number of features
-	theta_descent = np.zeros([2,len(features[0])])
+	theta_descent = [0,0]
 	cost_history = []
-
 	#actual gradient descent part
 	for i in range(num_iterations):
 		#hypothesis
 		#predicted_value = np.dot(features_array.transpose(), theta_descent)
+		
 		sum1 = np.sum(features_array[0] * theta_descent[0])
 		sum2 = np.sum(features_array[0] * theta_descent[1])
 		sum3 = np.sum(features_array[1] * theta_descent[0])
 		sum4 = np.sum(features_array[1] * theta_descent[1])
 		predicted_value = np.sum(theta_descent) + sum1 + sum2 + sum3 + sum4
-	
+		
 		#get "corectness"
 		sum_of_square_errors = np.square(predicted_value - values_array)
 		cost = sum_of_square_errors / (2 * m)
 		cost_history.append(cost)
 		
 		#next theta
-		theta_descent = theta_descent - alpha/m * ((predicted_value-values_array) * features_array)
-		#theta_descent[0] = theta_descent[0] - alpha/m * ((values_array - predicted_value) * features_array[0])
-		#theta_descent[1] = theta_descent[1] - alpha/m * ((values_array - predicted_value) * features_array[1])
-		
+		theta_descent[0] = theta_descent[0] - alpha/m * np.sum((predicted_value-values_array) * features_array[0])
+		theta_descent[1] = theta_descent[1] - alpha/m * np.sum((predicted_value-values_array) * features_array[1])
+
 		#this causes lag
 		if(i % 1000 == 0):
 			print('Epoch: ' + str(i/1000) + ' : ' + 'Cost: ' + str(cost_history[i]))
@@ -281,13 +204,16 @@ def gradient_descent():
 	#denormalize data
 	features = denormalize_features(features)
 	print('Value day before: ',features[0][-1:])
+	print('Actual Price: ', prediction_frame)
 	sum1 = np.sum(features[0] * theta_descent[0])
 	sum2 = np.sum(features[0] * theta_descent[1])
 	sum3 = np.sum(features[1] * theta_descent[0])
 	sum4 = np.sum(features[1] * theta_descent[1])
-	predictions = features[0][-1:] - (np.sum(theta_descent) + sum1 + sum2 + sum3 + sum4)
-	print('Theta Descent sum: ', np.sum(theta_descent))
-	print('Prediction change: ',(np.sum(theta_descent) + sum1 + sum2 + sum3 + sum4))
+	#predictions = features[0][-1:] - (np.sum(theta_descent) + sum1 + sum2 + sum3 + sum4)
+	print('Predicted price difference percent: ',(1+predictions))
+	predictions = (1+predictions) * features[0][-1:]
+	#print('Theta Descent sum: ', np.sum(theta_descent))
+	#print('Prediction change: ',(np.sum(theta_descent) + sum1 + sum2 + sum3 + sum4))
 	print('Predictions: ',predictions)
 	print('============================================')
 	
