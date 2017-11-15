@@ -71,6 +71,7 @@ def gradient_descent():
 	#this takes the closing price and the initial price Current_price = initial today price is the change is price 
 	#that day. So we take closing minus today change to get initial
 	#we then normalize this data
+	actual_values = []
 	values_feature = []
 	normalized_features = []
 	trend_feature = []
@@ -94,10 +95,12 @@ def gradient_descent():
 			change_col = change_col.replace(str(j),float(j))
 		change_col = change_col[predicted_Item]
 		#part that gets the initial and closing
-		values_feature.append(price_col)
+		actual_values.append(price_col)
+		
 		initial_price = price_col - change_col
 		closing_price = price_col
 		normalized = ((closing_price/initial_price)-1)
+		values_feature.append(closing_price/initial_price)
 		normalized_features.append(normalized)
 		
 		for j in today_trend:
@@ -120,7 +123,7 @@ def gradient_descent():
 	
 	m = len(values_array)
 	alpha = 0.00001
-	num_iterations = 300000
+	num_iterations = 400000
 	
 	#2 is the number of features
 	theta_descent = [0.5,0.5]
@@ -145,35 +148,38 @@ def gradient_descent():
 	#all output and debugging 
 	cost_history = pd.Series(cost_history)
 	
-	predictions = np.dot(features_array.transpose(), theta_descent)
-	#predictions = predicted(features_array, theta_descent)
+	
 	print('============================================')
 	print('Cost History: ', cost_history)
 	print('Theta Descent: ',theta_descent)
 	print('Alpha: ', alpha)
 	print('Iterations: ',num_iterations)
-
-	data_predictions = (predictions- values_array)**2
-	mean = values_array.mean()
-	sq_mean = ((values_array - mean)**2).sum()
 	
-	r = 1 - (data_predictions / sq_mean).sum()
-	print('R: ', r)
+	
 	
 	#denormalize data
 	features = denormalize_features(features)
 	predictions = np.dot(features.transpose(), theta_descent)
-	print('Value day before: ',features[0][-1:])
-	print('Actual Price: ', values_array)
-	print('Predicted price change percentage: ',predictions)
-	#predictions = (1+predictions) * features[0][-1:]
+	#doing this since we are essentialy "denormalizing our predictions" before
+	#predictions = (np.dot(features_array.transpose()+1, theta_descent))
+	#predictions = (features[0] * predictions).transpose()
+	
+	sum_of_square_errors = ((predictions - actual_values)**2).sum()
+	sq_mean = (np.array(actual_values).mean())**2
+	
+	r = 1 - (sq_mean/sum_of_square_errors)
+	print('R: ', r)
+	
+	print('Actual Prices: ', actual_values)
+	print('Predicted prices: ',predictions)
+	
 
 
 	
 	
 	print('============================================')
 	fig, ax = plt.subplots()
-	ax.plot(values_array,'o',markersize = 1, color = 'green', label = 'Actual Price')
+	ax.plot(actual_values,'o',markersize = 1, color = 'green', label = 'Actual Price')
 	ax.plot(predictions,'o',markersize = 1, color = 'blue', label = 'Predicted Price')
 	plt.legend()
 	fig2, ax2 = plt.subplots()
