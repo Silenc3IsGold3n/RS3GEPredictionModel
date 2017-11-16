@@ -162,22 +162,34 @@ def gradient_descent():
 	features = denormalize_features(features)
 	predictions = np.dot(features.transpose(), theta_descent)
 	
-	#doing this since we are essentialy "denormalizing our predictions" before
-	#predictions = (np.dot(features_array.transpose(), theta_descent))
-	#predictions = (features[0] * predictions).transpose()
-
 	
+	
+	
+	#offsett predicted values by meandifference which produces values very close to actualy data
+	actual_values = np.array(actual_values)
+	meandiff = abs(actual_values.mean() - predictions.mean())
+	predictions = predictions + meandiff
+	
+	
+	#doing this since we are essentialy "denormalizing our predictions" before
+	#predicted_percentage_change = (np.dot(features_array.transpose(), theta_descent))
+	#print(predicted_percentage_change)
+	#features = denormalize_features(features)
+	#predictions = (features[0] * (1-predicted_percentage_change)).transpose()
+
 	sum_of_square_errors = ((predictions - actual_values)**2).sum()
 	sq_mean = (np.array(actual_values).mean())**2
-	
 	r = 1 - (sq_mean/sum_of_square_errors)
 	print('R: ', r)
-	#print('Features after denormalizing: ',features)
+	print('Normalized Features: ',features_array)
 	print('Actual Prices: ', actual_values)
+	
+	#round predictions
+#	predictions = [round(x) for x in predictions]
 	print('Predicted prices: ',predictions)
 	
-
-
+	print('Next Price: ', prediction_frame)
+	
 	
 	
 	print('============================================')
