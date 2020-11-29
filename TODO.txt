@@ -1,3 +1,7 @@
+Fix checking the values compared to previous day to make sure that the prices were actually updated
+
+Write a small batch script to manage setting Scheduled Tasks to make set up easier
+
 Edit the page filter to not include urls that the previouse page had 12 items
 this way we do not need to get a new list for every update that adds new items.
 
