@@ -80,8 +80,10 @@ for j in range(3, max_column+1):#updating value for gp for today
             print(lastValue)
             previousValue = sheet_obj.cell(row=currentrow-1,column=j)
             price.value = lastValue
-            if(previousValue == lastValue or previousValue is None):
+            if(previousValue.value == lastValue or previousValue.value is None): #If amount matches the amount from the previous day, or if it is a newly added item to the sheet
                 amtSamePrice += 1
+print("amt the same:" + str(amtSamePrice))
+print("amt items:" + str(amtItems))
 if amtSamePrice == amtItems:
     print("GE isnt updated yet, all values the same. Task should be scheduled to restart this 4 hours from now.")
     wb_obj.close()
